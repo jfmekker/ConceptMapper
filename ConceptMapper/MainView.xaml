@@ -24,8 +24,8 @@
 		<GroupBox DockPanel.Dock="Right" Header="Calculations">
 			<Grid>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="100"/>
+					<ColumnDefinition Width="*" MinWidth="100"/>
+					<ColumnDefinition MinWidth="100"/>
 				</Grid.ColumnDefinitions>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
@@ -46,28 +46,28 @@
 				<Label Grid.Row="0" Grid.Column="0" FontSize="24" Content="Depth:"/>
 				<Label Grid.Row="0" Grid.Column="1" FontSize="24" Content="{Binding Depth}" HorizontalAlignment="Right"/>
 				<Label Grid.Row="1" Grid.Column="0" FontSize="24" Content="Width:"/>
-				<Label Grid.Row="1" Grid.Column="1" FontSize="24" Content="-" HorizontalAlignment="Right"/>
+				<Label Grid.Row="1" Grid.Column="1" FontSize="24" Content="{Binding Width}" HorizontalAlignment="Right"/>
 				<Label Grid.Row="2" Grid.Column="0" FontSize="24" Content="HSS:"/>
-				<Label Grid.Row="2" Grid.Column="1" FontSize="24" Content="-" HorizontalAlignment="Right"/>
+				<Label Grid.Row="2" Grid.Column="1" FontSize="24" Content="{Binding Hss}" HorizontalAlignment="Right"/>
 				<!-- Grid.Row 3 padding -->
 				<Label Grid.Row="4" Grid.Column="0" FontSize="24" Content="# Main Ideas:"/>
-				<Label Grid.Row="4" Grid.Column="1" FontSize="24" Content="-" HorizontalAlignment="Right"/>
+				<Label Grid.Row="4" Grid.Column="1" FontSize="24" Content="{Binding NumMainIdeas}" HorizontalAlignment="Right"/>
 				<Label Grid.Row="5" Grid.Column="0" FontSize="24" Content="Max # Details:"/>
-				<Label Grid.Row="5" Grid.Column="1" FontSize="24" Content="-" HorizontalAlignment="Right"/>
+				<Label Grid.Row="5" Grid.Column="1" FontSize="24" Content="{Binding MaxNumDetails}" HorizontalAlignment="Right"/>
 				<!-- Grid.Row 6 padding -->
 				<Label Grid.Row="7" Grid.Column="0" FontSize="24" Content="Prior Knowledge:"/>
-				<xctk:IntegerUpDown Grid.Row ="7" Grid.Column="1" Margin="2"/>
+				<xctk:IntegerUpDown Grid.Row ="7" Grid.Column="1" Margin="2" FontSize="24"/>
 				<Label Grid.Row="8" Grid.Column="0" FontSize="24" Content="Questions:"/>
+				<xctk:IntegerUpDown Grid.Row ="8" Grid.Column="1" Margin="2" FontSize="24"/>
 				<!-- Grid.Row 9 padding -->
-				<xctk:IntegerUpDown Grid.Row ="8" Grid.Column="1" Margin="2"/>
 				<Label Grid.Row="10" Grid.Column="0" FontSize="24" Content="# Crosslinks:"/>
-				<xctk:IntegerUpDown Grid.Row ="10" Grid.Column="1" Margin="2"/>
+				<xctk:IntegerUpDown Grid.Row ="10" Grid.Column="1" Margin="2" FontSize="24"/>
 				<Label Grid.Row="11" Grid.Column="0" FontSize="24" Content="Max Crosslink Dist.:"/>
-				<xctk:IntegerUpDown Grid.Row ="11" Grid.Column="1" Margin="2"/>
+				<xctk:IntegerUpDown Grid.Row ="11" Grid.Column="1" Margin="2" FontSize="24"/>
 				<!-- Grid.Row 12 padding -->
-				<Button Grid.Row="13" Grid.ColumnSpan="2" FontSize="24" Content="Done"/>
+				<Button Grid.Row="13" Grid.ColumnSpan="2" FontSize="24" Content="Done" IsEnabled="{Binding IsCompletable}"/>
 			</Grid>
 		</GroupBox>
-		<Canvas Background="LightGray" MinHeight="300" MinWidth="400" />
+		<Canvas x:Name="Canvas" Background="LightGray" MinHeight="300" MinWidth="400" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseRightButtonUp="Canvas_MouseRightButtonUp" />
 	</DockPanel>
 </Window>
