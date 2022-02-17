@@ -20,7 +20,7 @@ namespace ConceptMapper
 		private void Canvas_MouseLeftButtonUp( object sender , MouseButtonEventArgs e )
 		{
 			Point spot = e.GetPosition( this.Canvas );
-			this.viewModel.AddNode( new( (int)spot.X , (int)spot.Y ) );
+			this.viewModel.Click( new( (int)spot.X , (int)spot.Y ) );
 		}
 
 		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e ) => this.viewModel.ResetCurrent( );

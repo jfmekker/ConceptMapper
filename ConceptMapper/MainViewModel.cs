@@ -37,7 +37,18 @@ namespace ConceptMapper
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public void AddNode( Point point )
+		public void Click(Point point)
+		{
+			this.AddNode( point );
+		}
+
+		public void ResetCurrent( )
+		{
+			this.model.Current = this.model.Root;
+			this.DrawNodesAndEdges( );
+		}
+
+		private void AddNode( Point point )
 		{
 			Debug.WriteLine( $"ViewModel: Adding Node at ({point.X}, {point.Y})." );
 			MapNode node = new( ) { Position = point };
@@ -51,12 +62,6 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 			}
-		}
-
-		public void ResetCurrent( )
-		{
-			this.model.Current = this.model.Root;
-			this.DrawNodesAndEdges( );
 		}
 
 		private void DrawNodesAndEdges( )
