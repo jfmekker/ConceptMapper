@@ -68,6 +68,10 @@
 				<Button Grid.Row="13" Grid.ColumnSpan="2" FontSize="24" Content="Done" IsEnabled="{Binding IsCompletable}"/>
 			</Grid>
 		</GroupBox>
+		<StatusBar DockPanel.Dock="Bottom">
+			<Label Content="Nodes: " />
+			<Label Content="{Binding NumNodes}" />
+		</StatusBar>
 		<Canvas x:Name="Canvas" Background="LightGray" MinHeight="300" MinWidth="400" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseRightButtonUp="Canvas_MouseRightButtonUp" />
 	</DockPanel>
 </Window>

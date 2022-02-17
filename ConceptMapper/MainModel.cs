@@ -25,6 +25,8 @@ namespace ConceptMapper
 			get; private set;
 		}
 
+		public List<MapNode> AllNodes => this.Root?.GetWholeGraph( ) ?? new( );
+
 		public void AddNode( MapNode node )
 		{
 			if ( this.Root is null )
@@ -35,10 +37,20 @@ namespace ConceptMapper
 			else if ( this.Current is not null )
 			{
 				this.Current.Neighbors.Add( node );
+				node.Neighbors.Add( this.Current );
 				this.Current = node;
 			}
 
 			this.CalculateWidthAndDepth( );
+		}
+
+		public void AddEdge( MapNode node1 , MapNode node2 )
+		{
+			if ( !node1.Neighbors.Contains( node2 ) )
+			{
+				node1.Neighbors.Add( node2 );
+				node2.Neighbors.Add( node2 );
+			}
 		}
 
 		private void CalculateWidthAndDepth( )

@@ -17,11 +17,15 @@ namespace ConceptMapper
 		private readonly MainModel model;
 		private readonly Canvas canvas;
 
+		private static readonly int nodeRadius = 25;
+
 		public MainViewModel( Canvas canvas )
 		{
 			this.canvas = canvas;
 			this.model = new( );
 		}
+
+		public int NumNodes => this.model.AllNodes.Count;
 
 		public int Depth => this.model.Depth;
 
@@ -37,26 +41,63 @@ namespace ConceptMapper
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public void Click(Point point)
+		public void Click( Point point )
 		{
-			this.AddNode( point );
+			// Check if the click was in an existing node
+			List<MapNode> graph = this.model.AllNodes;
+			MapNode? current = this.model.Current;
+			MapNode? selected = null;
+			foreach ( MapNode node in graph )
+			{
+				Point nodePos = node.Position;
+				double dist = Math.Sqrt( Math.Pow( nodePos.X - point.X , 2 ) + Math.Pow( nodePos.X - point.X , 2 ) );
+				if ( dist <= nodeRadius )
+				{
+					selected = node;
+					break;
+				}
+			}
+
+			// Add edge between two existing nodes
+			if ( selected is not null && current is not null && selected != current )
+			{
+				Debug.WriteLine( $"ViewModel: Adding edge from ({selected.Position.X}, {selected.Position.Y}) to ({current.Position.X}, {current.Position.Y})." );
+				this.model.AddEdge( selected , current );
+				this.model.Current = selected;
+			}
+			// Set or reset current node
+			else if ( selected is not null )
+			{
+				Debug.WriteLine( $"ViewModel: Setting current node." );
+				this.model.Current = selected == current ? null : selected;
+			}
+			// Add a new node
+			else if ( current is not null || this.model.Root is null )
+			{
+				Debug.WriteLine( $"ViewModel: Adding Node at ({point.X}, {point.Y})." );
+				this.model.AddNode( new( ) { Position = point } );
+			}
+			else
+			{
+				Debug.WriteLine( $"ViewModel: Doing nothing." );
+			}
+
+			this.Update( );
 		}
 
 		public void ResetCurrent( )
 		{
-			this.model.Current = this.model.Root;
-			this.DrawNodesAndEdges( );
+			this.model.Current = null;
+			this.Update( );
 		}
 
-		private void AddNode( Point point )
+		private void Update( )
 		{
-			Debug.WriteLine( $"ViewModel: Adding Node at ({point.X}, {point.Y})." );
-			MapNode node = new( ) { Position = point };
-			this.model.AddNode( node );
 			this.DrawNodesAndEdges( );
 
 			if ( this.PropertyChanged is not null )
 			{
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumNodes ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Width ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Depth ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
@@ -67,44 +108,41 @@ namespace ConceptMapper
 		private void DrawNodesAndEdges( )
 		{
 			this.canvas.Children.Clear( );
-			if ( this.model.Root is not null )
+
+			List<MapNode> graph = this.model.AllNodes;
+			List<MapNode> drawn = new( graph.Count );
+			Debug.WriteLine( $"ViewModel: Redrawing {graph.Count} nodes and edges." );
+
+			foreach ( MapNode node in graph )
 			{
-				List<MapNode> graph = this.model.Root.GetWholeGraph( );
-				List<MapNode> drawn = new( graph.Count );
-				Debug.WriteLine( $"ViewModel: Redrawing {graph.Count} nodes and edges." );
-
-				foreach ( MapNode node in graph )
+				// Draw node
+				var nodeCircle = new Ellipse( )
 				{
-					// Draw node
-					int radius = 50;
-					var nodeCircle = new Ellipse( )
-					{
-						Width = radius ,
-						Height = radius ,
-						StrokeThickness = 2 ,
-						Stroke = node == this.model.Current ? Brushes.Green : Brushes.Red
-					};
-					_ = this.canvas.Children.Add( nodeCircle );
-					nodeCircle.SetValue( Canvas.LeftProperty , node.Position.X - ( radius / 2.0 ) );
-					nodeCircle.SetValue( Canvas.TopProperty , node.Position.Y - ( radius / 2.0 ) );
-					drawn.Add( node );
+					Width = nodeRadius * 2 ,
+					Height = nodeRadius * 2 ,
+					StrokeThickness = 2 ,
+					Stroke = node == this.model.Current ? Brushes.Green : Brushes.Red
+				};
+				_ = this.canvas.Children.Add( nodeCircle );
+				nodeCircle.SetValue( Canvas.LeftProperty , (double)node.Position.X - nodeRadius );
+				nodeCircle.SetValue( Canvas.TopProperty , (double)node.Position.Y - nodeRadius );
+				drawn.Add( node );
 
-					// Draw edges
-					foreach ( MapNode next in node.Neighbors )
+				// Draw edges
+				foreach ( MapNode next in node.Neighbors )
+				{
+					if ( !drawn.Contains( next ) )
 					{
-						if ( !drawn.Contains( next ) )
+						var edgeLine = new Line( )
 						{
-							var edgeLine = new Line( )
-							{
-								X1 = node.Position.X ,
-								Y1 = node.Position.Y ,
-								X2 = next.Position.X ,
-								Y2 = next.Position.Y ,
-								StrokeThickness = 2 ,
-								Stroke = Brushes.OrangeRed
-							};
-							_ = this.canvas.Children.Add( edgeLine );
-						}
+							X1 = node.Position.X ,
+							Y1 = node.Position.Y ,
+							X2 = next.Position.X ,
+							Y2 = next.Position.Y ,
+							StrokeThickness = 2 ,
+							Stroke = Brushes.OrangeRed
+						};
+						_ = this.canvas.Children.Add( edgeLine );
 					}
 				}
 			}
