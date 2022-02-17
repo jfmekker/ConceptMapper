@@ -12,9 +12,9 @@ namespace ConceptMapper
 
 		public MainView( )
 		{
-			this.viewModel = new MainViewModel( this );
-			this.DataContext = this.viewModel;
 			this.InitializeComponent( );
+			this.viewModel = new MainViewModel( this.Canvas );
+			this.DataContext = this.viewModel;
 		}
 
 		private void Canvas_MouseLeftButtonUp( object sender , MouseButtonEventArgs e )
@@ -23,9 +23,6 @@ namespace ConceptMapper
 			this.viewModel.AddNode( new( (int)spot.X , (int)spot.Y ) );
 		}
 
-		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e )
-		{
-			this.viewModel.ResetCurrent( );
-		}
+		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e ) => this.viewModel.ResetCurrent( );
 	}
 }

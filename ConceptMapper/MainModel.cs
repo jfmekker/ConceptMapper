@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -77,6 +79,7 @@ namespace ConceptMapper
 
 			this.Width = maxWidth;
 			this.Depth = maxDepth;
+			Debug.WriteLine( $"Model: Calculated width={this.Width} and depth={this.Depth}." );
 		}
 	}
 }
