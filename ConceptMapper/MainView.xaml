@@ -71,6 +71,8 @@
 		<StatusBar DockPanel.Dock="Bottom">
 			<Label Content="Nodes: " />
 			<Label Content="{Binding NumNodes}" />
+			<Label Content="    Edges: " />
+			<Label Content="{Binding NumEdges}" />
 		</StatusBar>
 		<Canvas x:Name="Canvas" Background="LightGray" MinHeight="300" MinWidth="400" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseRightButtonUp="Canvas_MouseRightButtonUp" />
 	</DockPanel>

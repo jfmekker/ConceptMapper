@@ -15,12 +15,19 @@ namespace ConceptMapper
 
 		public MapNode? Current { get; set; }
 
+		public List<MapNode> MainIdeas => this.Root?.Neighbors ?? new( );
+
 		public int Width
 		{
 			get; private set;
 		}
 
 		public int Depth
+		{
+			get; private set;
+		}
+
+		public int MaxNumDetails
 		{
 			get; private set;
 		}
@@ -42,15 +49,27 @@ namespace ConceptMapper
 			}
 
 			this.CalculateWidthAndDepth( );
+			this.CalculateMaxNumDetails( );
 		}
 
 		public void AddEdge( MapNode node1 , MapNode node2 )
 		{
-			if ( !node1.Neighbors.Contains( node2 ) )
+			bool n1 = node1.Neighbors.Contains( node2 );
+			bool n2 = node2.Neighbors.Contains( node1 );
+			Debug.Assert( n1 == n2 );
+
+			if ( !n1 && !n2 )
 			{
 				node1.Neighbors.Add( node2 );
-				node2.Neighbors.Add( node2 );
+				node2.Neighbors.Add( node1 );
 			}
+			else
+			{
+				Debug.WriteLine( "Model: Node already contains edge, not adding duplicate." );
+			}
+
+			this.CalculateWidthAndDepth( );
+			this.CalculateMaxNumDetails( );
 		}
 
 		private void CalculateWidthAndDepth( )
@@ -92,6 +111,34 @@ namespace ConceptMapper
 			this.Width = maxWidth;
 			this.Depth = maxDepth;
 			Debug.WriteLine( $"Model: Calculated width={this.Width} and depth={this.Depth}." );
+		}
+
+		private void CalculateMaxNumDetails( )
+		{
+			int max = 0;
+			foreach ( MapNode idea in this.MainIdeas )
+			{
+				// Get all nodes connected to idea not via Root
+				List<MapNode> details = new( ) { idea };
+				List<MapNode> considering = new( ) { idea };
+				while ( considering.Count > 0 )
+				{
+					foreach ( MapNode next in considering[0].Neighbors )
+					{
+						if ( !details.Contains( next ) && next != this.Root )
+						{
+							details.Add( next );
+							considering.Add( next );
+						}
+					}
+					_ = considering.Remove( considering[0] );
+				}
+
+				max = Math.Max( max , details.Count );
+			}
+
+			// Subtract 1 to not count the main idea itself
+			this.MaxNumDetails = max - 1;
 		}
 	}
 }

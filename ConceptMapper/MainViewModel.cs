@@ -27,15 +27,17 @@ namespace ConceptMapper
 
 		public int NumNodes => this.model.AllNodes.Count;
 
+		public int NumEdges => this.model.AllNodes.Sum( x => x.Neighbors.Count ) / 2;
+
 		public int Depth => this.model.Depth;
 
 		public int Width => this.model.Width;
 
 		public int Hss => this.Depth + this.Width;
 
-		public int NumMainIdeas => this.model.Root?.Neighbors.Count ?? 0;
+		public int NumMainIdeas => this.model.MainIdeas.Count;
 
-		public int MaxNumDetails => -1;
+		public int MaxNumDetails => this.model.MaxNumDetails;
 
 		public bool IsCompletable => this.model.Root is not null;
 
@@ -50,7 +52,7 @@ namespace ConceptMapper
 			foreach ( MapNode node in graph )
 			{
 				Point nodePos = node.Position;
-				double dist = Math.Sqrt( Math.Pow( nodePos.X - point.X , 2 ) + Math.Pow( nodePos.X - point.X , 2 ) );
+				double dist = Math.Sqrt( Math.Pow( nodePos.X - point.X , 2 ) + Math.Pow( nodePos.Y - point.Y , 2 ) );
 				if ( dist <= nodeRadius )
 				{
 					selected = node;
@@ -68,7 +70,7 @@ namespace ConceptMapper
 			// Set or reset current node
 			else if ( selected is not null )
 			{
-				Debug.WriteLine( $"ViewModel: Setting current node." );
+				Debug.WriteLine( $"ViewModel: Setting current node to {( selected == current ? null : selected )}." );
 				this.model.Current = selected == current ? null : selected;
 			}
 			// Add a new node
@@ -98,10 +100,12 @@ namespace ConceptMapper
 			if ( this.PropertyChanged is not null )
 			{
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumNodes ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumEdges ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Width ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Depth ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
 			}
 		}
 
@@ -111,7 +115,7 @@ namespace ConceptMapper
 
 			List<MapNode> graph = this.model.AllNodes;
 			List<MapNode> drawn = new( graph.Count );
-			Debug.WriteLine( $"ViewModel: Redrawing {graph.Count} nodes and edges." );
+			Debug.WriteLine( $"ViewModel: Redrawing {this.NumNodes} nodes and {this.NumEdges} edges." );
 
 			foreach ( MapNode node in graph )
 			{
