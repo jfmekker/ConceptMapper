@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -86,14 +84,25 @@ namespace ConceptMapper
 			};
 		}
 
-		public Line MakeLineTo( MapNode other )
+		public Line MakeLineTo( MapNode that )
 		{
+			double theta = Math.Atan2( that.Y - this.Y , that.X - this.X );
+			Debug.WriteLine( $"MapNode: theta = {theta * 180.0 / Math.PI}" );
+
+			double dx = RADIUS * Math.Cos( theta );
+			double dy = RADIUS * Math.Sin( theta );
+
+			double X1 = this.X + dx;
+			double Y1 = this.Y + dy;
+			double X2 = that.X - dx;
+			double Y2 = that.Y - dy;
+
 			return new Line( )
 			{
-				X1 = this.X ,
-				Y1 = this.Y ,
-				X2 = other.X ,
-				Y2 = other.Y ,
+				X1 = X1 ,
+				Y1 = Y1 ,
+				X2 = X2 ,
+				Y2 = Y2 ,
 				Opacity = 0.5 ,
 				StrokeThickness = 2 ,
 				Stroke = Brushes.Gray ,
