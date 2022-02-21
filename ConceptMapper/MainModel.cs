@@ -17,20 +17,11 @@ namespace ConceptMapper
 
 		public List<MapNode> MainIdeas => this.Root?.Neighbors ?? new( );
 
-		public int Width
-		{
-			get; private set;
-		}
+		public int Width { get; private set; }
 
-		public int Depth
-		{
-			get; private set;
-		}
+		public int Depth { get; private set; }
 
-		public int MaxNumDetails
-		{
-			get; private set;
-		}
+		public int MaxNumDetails { get; private set; }
 
 		public List<MapNode> AllNodes => this.Root?.GetWholeGraph( ) ?? new( );
 

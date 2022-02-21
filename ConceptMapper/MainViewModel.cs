@@ -107,6 +107,11 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
 			}
+
+			foreach (MapNode node in this.model.AllNodes)
+			{
+				Debug.WriteLine( node );
+			}
 		}
 
 		private void DrawNodesAndEdges( )

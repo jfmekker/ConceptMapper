@@ -9,11 +9,17 @@ namespace ConceptMapper
 {
 	public class MapNode
 	{
+		private static int nextId;
+
+		public MapNode( ) { this.ID = nextId++; }
+
+		public int ID { get; init; }
+
 		public Point Position { get; set; }
 
 		public List<MapNode> Neighbors { get; set; } = new( );
 
-		public List<MapNode> GetWholeGraph()
+		public List<MapNode> GetWholeGraph( )
 		{
 			List<MapNode> level = new( ) { this };
 			List<MapNode> all = new( ) { };
@@ -26,7 +32,7 @@ namespace ConceptMapper
 				{
 					foreach ( MapNode next in node.Neighbors )
 					{
-						if ( !all.Contains( next ) )
+						if ( !all.Contains( next ) && !newLevel.Contains( next ) )
 						{
 							newLevel.Add( next );
 						}
@@ -37,6 +43,18 @@ namespace ConceptMapper
 			}
 
 			return all;
+		}
+
+		public override string? ToString( )
+		{
+			string str = $"Node #{this.ID}: ";
+
+			foreach ( MapNode neighbor in this.Neighbors )
+			{
+				str += neighbor.ID + " ";
+			}
+
+			return str;
 		}
 	}
 }
