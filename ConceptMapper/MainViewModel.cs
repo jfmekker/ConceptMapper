@@ -34,9 +34,11 @@ namespace ConceptMapper
 
 		public int MaxNumDetails => this.model.MaxNumDetails;
 
+		public bool ShowCurrent { get; set; } = true;
+
 		public bool ShowRoot { get; set; } = true;
 
-		public bool ShowCurrent { get; set; } = true;
+		public bool ShowMainIdeas { get; set; } = false;
 
 		public bool IsCompletable => this.model.Root is not null;
 
@@ -90,6 +92,12 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
+		public void ResetCanvas( )
+		{
+			this.model.Reset( );
+			this.Update( );
+		}
+
 		private void Update( )
 		{
 			this.DrawNodesAndEdges( );
@@ -103,11 +111,6 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
-			}
-
-			foreach ( MapNode node in this.model.AllNodes )
-			{
-				Debug.WriteLine( node );
 			}
 		}
 

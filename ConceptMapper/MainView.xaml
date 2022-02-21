@@ -12,12 +12,12 @@
 			<MenuItem Header="File">
 				<MenuItem Header="Select map image..."/>
 				<MenuItem Header="Select output file..."/>
-				<MenuItem Header="Reset current image..."/>
+				<MenuItem Header="Reset current image" Click="Menu_ResetImage"/>
 			</MenuItem>
 			<MenuItem Header="View">
-				<MenuItem IsChecked="True" Header="Highlight (red fill) root node"/>
-				<MenuItem IsChecked="True" Header="Highlight (green outline) current node"/>
-				<MenuItem IsChecked="True" Header="Highlight (yellow fill) main ideas"/>
+				<MenuItem IsCheckable="True" IsChecked="{Binding ShowCurrent}" Header="Highlight (green outline) current node"/>
+				<MenuItem IsCheckable="True" IsChecked="{Binding ShowRoot}" Header="Highlight (yellow fill) root node"/>
+				<MenuItem IsCheckable="True" IsChecked="{Binding ShowMainIdeas}" Header="Highlight (orange fill) main ideas"/>
 			</MenuItem>
 			<MenuItem Header="Image"><!-- TODO? --></MenuItem>
 		</Menu>

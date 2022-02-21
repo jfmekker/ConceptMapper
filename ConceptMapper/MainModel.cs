@@ -63,6 +63,16 @@ namespace ConceptMapper
 			this.CalculateMaxNumDetails( );
 		}
 
+		public void Reset( )
+		{
+			this.Current = null;
+			this.Root = null;
+
+			this.Width = 0;
+			this.Depth = 0;
+			this.MaxNumDetails = 0;
+		}
+
 		private void CalculateWidthAndDepth( )
 		{
 			int maxWidth = 0;
