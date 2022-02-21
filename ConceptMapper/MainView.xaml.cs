@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Microsoft.Win32;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ConceptMapper
@@ -26,5 +27,13 @@ namespace ConceptMapper
 		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e ) => this.viewModel.ResetCurrent( );
 
 		private void Menu_ResetImage( object sender , RoutedEventArgs e ) => this.viewModel.ResetCanvas( );
+
+		private void Menu_SelectImage( object sender , RoutedEventArgs e )
+		{
+			OpenFileDialog dialog = new( );
+			_ = dialog.ShowDialog( );
+		}
+
+		private void Menu_About( object sender , RoutedEventArgs e ) => _ = MessageBox.Show( "Title: Concept Mapper\nAuthor: Jacob Mekker\n\nDescription:\nTODO\nLicense:\nTODO" );
 	}
 }
