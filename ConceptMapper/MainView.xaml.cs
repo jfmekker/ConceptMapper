@@ -39,7 +39,8 @@ namespace ConceptMapper
 
 		private void Menu_SelectOutputFile( object sender , RoutedEventArgs e )
 		{
-			OpenFileDialog dialog = new( );
+			SaveFileDialog dialog = new( );
+			dialog.Filter = "*.csv";
 			if ( dialog.ShowDialog( ) is true )
 			{
 				this.viewModel.OutputFile = dialog.FileName;

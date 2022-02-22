@@ -51,11 +51,16 @@ namespace ConceptMapper
 		public int NumMainIdeas => this.model.MainIdeas.Count;
 		public int MaxNumDetails => this.model.MaxNumDetails;
 
+		public int? PriorKnowledge { get => this.model.PriorKnowledge; set => this.model.PriorKnowledge = value; }
+		public int? Questions { get => this.model.Questions; set => this.model.Questions = value; }
+		public int? NumCrosslinks { get => this.model.NumCrosslinks; set => this.model.NumCrosslinks = value; }
+		public int? MaxCrosslinkDist { get => this.model.MaxCrosslinkDist; set => this.model.MaxCrosslinkDist = value; }
+
 		public bool ShowCurrent { get; set; } = true;
 		public bool ShowRoot { get; set; } = true;
 		public bool ShowMainIdeas { get; set; }
 
-		public bool IsCompletable => this.model.Root is not null && this.model.ImageFilePath is not null && this.model.OutputFilePath is not null;
+		public bool IsCompletable => this.model.IsCompletable;
 		public string CompletableTooltip =>
 			( this.IsCompletable ? "Good to go! :)" : "Can not complete because:" ) +
 			( this.model.Root is null ? "\n - No nodes have been placed." : "" ) +
@@ -120,14 +125,10 @@ namespace ConceptMapper
 
 		public void Done( )
 		{
-			if ( !this.IsCompletable )
-			{
-				throw new Exception( "Done was executed when IsCompletable was false." );
-			}
-
-			// TODO export data
+			this.model.Export( );
 
 			// TODO get next image
+			this.model.ImageFilePath = null;
 
 			this.ResetCanvas( );
 		}
@@ -145,6 +146,7 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.PriorKnowledge ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFile ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
 			}

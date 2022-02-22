@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,15 @@ namespace ConceptMapper
 		public int Hss => this.Width + this.Depth;
 		public int MaxNumDetails { get; private set; }
 
+		public int? PriorKnowledge { get; set; }
+		public int? Questions { get; set; }
+		public int? NumCrosslinks { get; set; }
+		public int? MaxCrosslinkDist { get; set; }
+
 		public Uri? ImageFilePath { get; set; }
 		public Uri? OutputFilePath { get; set; }
+
+		public bool IsCompletable => this.Root is not null && this.ImageFilePath is not null && this.OutputFilePath is not null;
 
 		public void AddNode( MapNode node )
 		{
@@ -71,6 +79,26 @@ namespace ConceptMapper
 			this.Width = 0;
 			this.Depth = 0;
 			this.MaxNumDetails = 0;
+		}
+
+		public void Export( )
+		{
+			if ( !this.IsCompletable )
+			{
+				throw new Exception( "Done was executed when IsCompletable was false." );
+			}
+
+			bool writeHeader = !File.Exists( this.OutputFilePath!.AbsoluteUri );
+			using StreamWriter writer = new( this.OutputFilePath!.AbsoluteUri , true );
+
+			if ( writeHeader )
+			{
+				writer.WriteLine( "Image,Width,Depth,HSS,NumMainIdeas,MaxNumOfDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
+			}
+
+			writer.WriteLine( "" );
+
+			// write info
 		}
 
 		private void CalculateWidthAndDepth( )
@@ -140,6 +168,11 @@ namespace ConceptMapper
 
 			// Subtract 1 to not count the main idea itself
 			this.MaxNumDetails = max - 1;
+		}
+
+		private string ImageInfoLine( )
+		{
+			return $"";
 		}
 	}
 }
