@@ -1,0 +1,39 @@
+﻿<Window x:Class="ConceptMapper.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ConceptMapper"
+        mc:Ignorable="d"
+        Title="About" Height="auto" Width="200">
+    <Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+		<Label Grid.Row="0">Title:</Label>
+		<Label Grid.Row="1">Author:</Label>
+		<Label Grid.Row="2">Github:</Label>
+		<Label Grid.Row="3">Build Date:</Label>
+		<Label Grid.Column="1" Grid.Row="0" HorizontalContentAlignment="Right">Concept Mapper</Label>
+		<Label Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Right">Jacob Mekker</Label>
+		<Label Grid.Column="1" Grid.Row="2" HorizontalContentAlignment="Right">
+			<TextBlock>
+				<Hyperlink NavigateUri="https://github.com/jfmekker/ConceptMapper">link</Hyperlink>
+			</TextBlock>
+		</Label>
+		<Label Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Right">2022-02-22</Label>
+		<TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="2,5,2,5">License:</TextBlock>
+		<TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="2,5,2,5">Description:</TextBlock>
+		<TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="2,5,2,5">Instructions:</TextBlock>
+	</Grid>
+</Window>
