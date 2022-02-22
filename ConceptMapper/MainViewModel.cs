@@ -51,10 +51,10 @@ namespace ConceptMapper
 		public bool IsCompletable => this.model.Root is not null && this.imageFile is not null && this.outputFile is not null;
 
 		public string CompletableTooltip =>
-			this.IsCompletable ? "Good to go! :)" :
-			this.model.Root is null ? "No nodes have been placed.\n" : "" +
-			this.imageFile is null ? "No image file has been selected.\n" : "" +
-			this.outputFile is null ? "No output file has been selected.\n" : "";
+			( this.IsCompletable ? "Good to go! :)" : "Can not complete because:" ) +
+			( this.model.Root is null ? "\n - No nodes have been placed." : "" ) +
+			( this.imageFile is null ? "\n - No image file has been selected." : "" ) +
+			( this.outputFile is null ? "\n - No output file has been selected." : "" );
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -146,6 +146,7 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.File ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
 			}
 		}
 
