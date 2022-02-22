@@ -58,7 +58,7 @@ namespace ConceptMapper
 
 		public bool ShowCurrent { get; set; } = true;
 		public bool ShowRoot { get; set; } = true;
-		public bool ShowMainIdeas { get; set; }
+		public bool ShowMainIdeas { get; set; } = true;
 
 		public bool IsCompletable => this.model.IsCompletable;
 		public string CompletableTooltip =>
@@ -117,9 +117,9 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
-		public void ResetCanvas( )
+		public void ResetGraph( )
 		{
-			this.model.ResetImage( );
+			this.model.ResetGraph( );
 			this.Update( );
 		}
 
@@ -130,7 +130,7 @@ namespace ConceptMapper
 			// TODO get next image
 			this.model.ImageFilePath = null;
 
-			this.ResetCanvas( );
+			this.ResetGraph( );
 		}
 
 		private void Update( )

@@ -26,7 +26,7 @@ namespace ConceptMapper
 
 		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e ) => this.viewModel.ResetCurrent( );
 
-		private void Menu_ResetImage( object sender , RoutedEventArgs e ) => this.viewModel.ResetCanvas( );
+		private void Menu_ResetGraph( object sender , RoutedEventArgs e ) => this.viewModel.ResetGraph( );
 
 		private void Menu_SelectImageFile( object sender , RoutedEventArgs e )
 		{

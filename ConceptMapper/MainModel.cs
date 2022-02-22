@@ -71,7 +71,7 @@ namespace ConceptMapper
 			this.CalculateMaxNumDetails( );
 		}
 
-		public void ResetImage( )
+		public void ResetGraph( )
 		{
 			this.Current = null;
 			this.Root = null;
@@ -79,6 +79,11 @@ namespace ConceptMapper
 			this.Width = 0;
 			this.Depth = 0;
 			this.MaxNumDetails = 0;
+
+			this.PriorKnowledge = null;
+			this.Questions = null;
+			this.NumCrosslinks = null;
+			this.MaxCrosslinkDist = null;
 		}
 
 		public void Export( )

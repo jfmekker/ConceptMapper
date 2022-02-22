@@ -12,7 +12,7 @@
 			<MenuItem Header="File">
 				<MenuItem Header="Select map image..." Click="Menu_SelectImageFile"/>
 				<MenuItem Header="Select output file..." Click="Menu_SelectOutputFile"/>
-				<MenuItem Header="Reset current image" Click="Menu_ResetImage"/>
+				<MenuItem Header="Delete all nodes" Click="Menu_ResetGraph"/>
 			</MenuItem>
 			<MenuItem Header="View">
 				<MenuItem IsCheckable="True" IsChecked="{Binding ShowCurrent}" Header="Highlight (green outline) current node"/>
@@ -66,7 +66,7 @@
 				<Label Grid.Row="11" Grid.Column="0" FontSize="24" Content="Max Crosslink Dist.:"/>
 				<xctk:IntegerUpDown Grid.Row ="11" Grid.Column="1" Margin="2" FontSize="24" Value="{Binding MaxCrosslinkDist}"/>
 				<!-- Grid.Row 12 padding -->
-				<Button Grid.Row="13" Grid.ColumnSpan="2" FontSize="24" Content="Done" IsEnabled="{Binding IsCompletable}" ToolTip="{Binding CompletableTooltip}" ToolTipService.ShowOnDisabled="True"  Click="Button_DoneClick"/>
+				<Button Grid.Row="13" Grid.ColumnSpan="2" FontSize="24" Content="Done" IsEnabled="{Binding IsCompletable}" ToolTip="{Binding CompletableTooltip}" ToolTipService.ShowOnDisabled="True" Click="Button_DoneClick"/>
 			</Grid>
 		</GroupBox>
 		<StatusBar DockPanel.Dock="Bottom">
