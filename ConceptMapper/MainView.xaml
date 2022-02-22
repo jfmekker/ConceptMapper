@@ -6,7 +6,8 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:ConceptMapper" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
 		mc:Ignorable="d"
-        Title="{Binding ImageFile}" Height="auto" Width="auto">
+        Title="{Binding ImageFile}" Height="auto" Width="auto"
+		Keyboard.KeyDown="Window_KeyDown">
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">

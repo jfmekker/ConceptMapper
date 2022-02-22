@@ -79,11 +79,29 @@ namespace ConceptMapper
 			this.Width = 0;
 			this.Depth = 0;
 			this.MaxNumDetails = 0;
+		}
 
-			this.PriorKnowledge = null;
-			this.Questions = null;
-			this.NumCrosslinks = null;
-			this.MaxCrosslinkDist = null;
+		public void DeleteCurrentNode( )
+		{
+			List<MapNode> all = this.AllNodes;
+
+			if ( this.Current == this.Root )
+			{
+				this.ResetGraph( );
+			}
+			else if ( this.Current is not null )
+			{
+				Debug.WriteLine( $"Model: Removing node {this.Current}" );
+
+				foreach ( MapNode node in all )
+				{
+					_ = node.Neighbors.Remove( this.Current );
+				}
+
+				this.Current = null;
+				this.CalculateWidthAndDepth( );
+				this.CalculateMaxNumDetails( );
+			}
 		}
 
 		public void Export( )

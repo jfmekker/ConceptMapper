@@ -149,7 +149,17 @@ namespace ConceptMapper
 			}
 			this.model.ImageFilePath = nextImage;
 
+			this.PriorKnowledge = null;
+			this.Questions = null;
+			this.NumCrosslinks = null;
+			this.MaxCrosslinkDist = null;
 			this.ResetGraph( );
+		}
+
+		public void DeleteCurrent( )
+		{
+			this.model.DeleteCurrentNode( );
+			this.Update( );
 		}
 
 		private void Update( )
