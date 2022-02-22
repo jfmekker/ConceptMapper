@@ -38,5 +38,7 @@ namespace ConceptMapper
 		}
 
 		private void Menu_About( object sender , RoutedEventArgs e ) => _ = MessageBox.Show( "Title: Concept Mapper\nAuthor: Jacob Mekker\n\nDescription:\nTODO\nLicense:\nTODO" );
+
+		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done();
 	}
 }

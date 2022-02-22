@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,7 +17,8 @@ namespace ConceptMapper
 		private readonly MainModel model;
 		private readonly Canvas canvas;
 
-		private string? file;
+		private string? imageFile;
+		private string? outputFile;
 
 		public MainViewModel( Canvas canvas )
 		{
@@ -24,7 +26,7 @@ namespace ConceptMapper
 			this.model = new( );
 		}
 
-		public string File => this.file ?? "Concept Mapper";
+		public string File => this.imageFile ?? "Concept Mapper";
 
 		public int NumNodes => this.model.AllNodes.Count;
 
@@ -46,7 +48,13 @@ namespace ConceptMapper
 
 		public bool ShowMainIdeas { get; set; }
 
-		public bool IsCompletable => this.model.Root is not null;
+		public bool IsCompletable => this.model.Root is not null && this.imageFile is not null && this.outputFile is not null;
+
+		public string CompletableTooltip =>
+			this.IsCompletable ? "Good to go! :)" :
+			this.model.Root is null ? "No nodes have been placed.\n" : "" +
+			this.imageFile is null ? "No image file has been selected.\n" : "" +
+			this.outputFile is null ? "No output file has been selected.\n" : "";
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -106,8 +114,22 @@ namespace ConceptMapper
 
 		public void SetFile( string file )
 		{
-			this.file = file;
+			this.imageFile = file;
 			this.Update( );
+		}
+
+		public void Done( )
+		{
+			if ( !this.IsCompletable )
+			{
+				throw new Exception( "Done was executed when IsCompletable was false." );
+			}
+
+			// TODO export data
+
+			// TODO get next image
+
+			this.ResetCanvas( );
 		}
 
 		private void Update( )
@@ -130,7 +152,7 @@ namespace ConceptMapper
 		private void DrawNodesAndEdges( )
 		{
 			this.canvas.Children.Clear( );
-			this.canvas.Background = this.file is not null ? new ImageBrush( new BitmapImage( new System.Uri( this.file ) ) ) : Brushes.LightGray;
+			this.canvas.Background = this.imageFile is not null ? new ImageBrush( new BitmapImage( new System.Uri( this.imageFile ) ) ) : Brushes.LightGray;
 
 			List<MapNode> graph = this.model.AllNodes;
 			List<MapNode> drawn = new( graph.Count );
