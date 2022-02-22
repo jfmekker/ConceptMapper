@@ -79,7 +79,7 @@ namespace ConceptMapper
 				Height = RADIUS * 2 ,
 				Opacity = 0.5 ,
 				StrokeThickness = 2 ,
-				Stroke = Brushes.Black ,
+				Stroke = Brushes.Red ,
 				RenderTransform = new TranslateTransform( this.X - RADIUS , this.Y - RADIUS ) ,
 			};
 		}
@@ -105,7 +105,7 @@ namespace ConceptMapper
 				Y2 = Y2 ,
 				Opacity = 0.5 ,
 				StrokeThickness = 2 ,
-				Stroke = Brushes.Gray ,
+				Stroke = Brushes.Red ,
 			};
 		}
 	}

@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace ConceptMapper
@@ -14,11 +16,15 @@ namespace ConceptMapper
 		private readonly MainModel model;
 		private readonly Canvas canvas;
 
+		private string? file;
+
 		public MainViewModel( Canvas canvas )
 		{
 			this.canvas = canvas;
 			this.model = new( );
 		}
+
+		public string File => this.file ?? "Concept Mapper";
 
 		public int NumNodes => this.model.AllNodes.Count;
 
@@ -38,7 +44,7 @@ namespace ConceptMapper
 
 		public bool ShowRoot { get; set; } = true;
 
-		public bool ShowMainIdeas { get; set; } = false;
+		public bool ShowMainIdeas { get; set; }
 
 		public bool IsCompletable => this.model.Root is not null;
 
@@ -98,6 +104,12 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
+		public void SetFile( string file )
+		{
+			this.file = file;
+			this.Update( );
+		}
+
 		private void Update( )
 		{
 			this.DrawNodesAndEdges( );
@@ -111,12 +123,14 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.File ) ) );
 			}
 		}
 
 		private void DrawNodesAndEdges( )
 		{
 			this.canvas.Children.Clear( );
+			this.canvas.Background = this.file is not null ? new ImageBrush( new BitmapImage( new System.Uri( this.file ) ) ) : Brushes.LightGray;
 
 			List<MapNode> graph = this.model.AllNodes;
 			List<MapNode> drawn = new( graph.Count );
@@ -130,6 +144,16 @@ namespace ConceptMapper
 				if ( node == this.model.Root && this.ShowRoot )
 				{
 					nodeShape.Fill = Brushes.Yellow.Clone( );
+					nodeShape.Fill.Opacity = 0.25;
+				}
+				else if ( this.model.MainIdeas.Contains( node ) && this.ShowMainIdeas )
+				{
+					nodeShape.Fill = Brushes.Orange.Clone( );
+					nodeShape.Fill.Opacity = 0.25;
+				}
+				else
+				{
+					nodeShape.Fill = Brushes.Green.Clone( );
 					nodeShape.Fill.Opacity = 0.25;
 				}
 

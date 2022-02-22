@@ -6,7 +6,7 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:ConceptMapper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="auto" Width="auto">
+        Title="{Binding File}" Height="auto" Width="auto">
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">

@@ -31,7 +31,10 @@ namespace ConceptMapper
 		private void Menu_SelectImage( object sender , RoutedEventArgs e )
 		{
 			OpenFileDialog dialog = new( );
-			_ = dialog.ShowDialog( );
+			if ( dialog.ShowDialog( ) is true )
+			{
+				this.viewModel.SetFile( dialog.FileName );
+			}
 		}
 
 		private void Menu_About( object sender , RoutedEventArgs e ) => _ = MessageBox.Show( "Title: Concept Mapper\nAuthor: Jacob Mekker\n\nDescription:\nTODO\nLicense:\nTODO" );
