@@ -101,7 +101,7 @@ namespace ConceptMapper
 				writer.WriteLine( "Image,Width,Depth,HSS,NumMainIdeas,MaxNumOfDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
 			}
 
-			string info = $"{this.ImageFilePath!.LocalPath},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
+			string info = $"{Path.GetFileName( this.ImageFilePath!.LocalPath )},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
 			Debug.WriteLine( $"Model: {info}" );
 			writer.WriteLine( info );
 		}

@@ -42,6 +42,7 @@ namespace ConceptMapper
 			SaveFileDialog dialog = new( );
 			dialog.Filter = "Comma-Separated Value files (*csv)|*.csv";
 			dialog.AddExtension = true;
+			dialog.OverwritePrompt = false;
 			if ( dialog.ShowDialog( ) is true )
 			{
 				this.viewModel.OutputFile = dialog.FileName;

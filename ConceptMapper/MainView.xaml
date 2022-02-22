@@ -11,6 +11,7 @@
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
 				<MenuItem Header="Select map image..." Click="Menu_SelectImageFile"/>
+				<MenuItem IsCheckable="True" IsChecked="{Binding AutoNextImage}" Header="Auto select next image in folder"/>
 				<MenuItem Header="Select output file..." Click="Menu_SelectOutputFile"/>
 				<MenuItem Header="Delete all nodes" Click="Menu_ResetGraph"/>
 			</MenuItem>
@@ -74,6 +75,8 @@
 			<Label Content="{Binding NumNodes}" MinWidth="25"/>
 			<Label Content="Edges: " Margin="20,0,0,0"/>
 			<Label Content="{Binding NumEdges}" MinWidth="25"/>
+			<Label Content="Image Folder: "  Margin="20,0,0,0" />
+			<Label Content="{Binding ImageFolder}"/>
 			<Label Content="Output File: "  Margin="20,0,0,0" />
 			<Label Content="{Binding OutputFile}"/>
 		</StatusBar>

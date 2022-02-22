@@ -10,6 +10,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+// There's a Path class in Windows.Shapes for some reason
+using Path = System.IO.Path;
+
 namespace ConceptMapper
 {
 	public class MainViewModel : INotifyPropertyChanged
@@ -23,12 +26,17 @@ namespace ConceptMapper
 			this.model = new( );
 		}
 
+		public string? ImageFolder { get; set; }
+		public bool AutoNextImage { get; set; } = true;
+
 		public string ImageFile
 		{
 			get => this.model.ImageFilePath?.LocalPath ?? "Concept Mapper";
 			set
 			{
-				this.model.ImageFilePath = new Uri( value );
+				var uri = new Uri( value );
+				this.model.ImageFilePath = uri;
+				this.ImageFolder = Path.GetDirectoryName( uri.LocalPath );
 				this.Update( );
 			}
 		}
@@ -127,8 +135,19 @@ namespace ConceptMapper
 		{
 			this.model.Export( );
 
-			// TODO get next image
-			this.model.ImageFilePath = null;
+			Uri? nextImage = null;
+			if ( this.AutoNextImage && this.ImageFolder is not null )
+			{
+				int i = 0;
+				string[] images = Directory.GetFiles( this.ImageFolder );
+
+				while ( i < images.Length && this.ImageFile != images[i] )
+					i += 1;
+
+				if ( i + 1 < images.Length )
+					nextImage = new Uri( images[i + 1] );
+			}
+			this.model.ImageFilePath = nextImage;
 
 			this.ResetGraph( );
 		}
@@ -148,6 +167,7 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFile ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFolder ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.OutputFile ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.IsCompletable ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
