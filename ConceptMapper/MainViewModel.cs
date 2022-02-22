@@ -17,44 +17,50 @@ namespace ConceptMapper
 		private readonly MainModel model;
 		private readonly Canvas canvas;
 
-		private string? imageFile;
-		private string? outputFile;
-
 		public MainViewModel( Canvas canvas )
 		{
 			this.canvas = canvas;
 			this.model = new( );
 		}
 
-		public string File => this.imageFile ?? "Concept Mapper";
+		public string ImageFile
+		{
+			get => this.model.ImageFilePath?.AbsoluteUri ?? "Concept Mapper";
+			set
+			{
+				this.model.ImageFilePath = new Uri( value );
+				this.Update( );
+			}
+		}
+		public string OutputFile
+		{
+			get => this.model.OutputFilePath?.AbsoluteUri ?? "not selected";
+			set
+			{
+				this.model.OutputFilePath = new Uri( value );
+				this.Update( );
+			}
+		}
 
 		public int NumNodes => this.model.AllNodes.Count;
-
 		public int NumEdges => this.model.AllNodes.Sum( x => x.Neighbors.Count ) / 2;
 
 		public int Depth => this.model.Depth;
-
 		public int Width => this.model.Width;
-
-		public int Hss => this.Depth + this.Width;
-
+		public int Hss => this.model.Hss;
 		public int NumMainIdeas => this.model.MainIdeas.Count;
-
 		public int MaxNumDetails => this.model.MaxNumDetails;
 
 		public bool ShowCurrent { get; set; } = true;
-
 		public bool ShowRoot { get; set; } = true;
-
 		public bool ShowMainIdeas { get; set; }
 
-		public bool IsCompletable => this.model.Root is not null && this.imageFile is not null && this.outputFile is not null;
-
+		public bool IsCompletable => this.model.Root is not null && this.model.ImageFilePath is not null && this.model.OutputFilePath is not null;
 		public string CompletableTooltip =>
 			( this.IsCompletable ? "Good to go! :)" : "Can not complete because:" ) +
 			( this.model.Root is null ? "\n - No nodes have been placed." : "" ) +
-			( this.imageFile is null ? "\n - No image file has been selected." : "" ) +
-			( this.outputFile is null ? "\n - No output file has been selected." : "" );
+			( this.model.ImageFilePath is null ? "\n - No image file has been selected." : "" ) +
+			( this.model.OutputFilePath is null ? "\n - No output file has been selected." : "" );
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -108,13 +114,7 @@ namespace ConceptMapper
 
 		public void ResetCanvas( )
 		{
-			this.model.Reset( );
-			this.Update( );
-		}
-
-		public void SetFile( string file )
-		{
-			this.imageFile = file;
+			this.model.ResetImage( );
 			this.Update( );
 		}
 
@@ -145,7 +145,7 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
-				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.File ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFile ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
 			}
 		}
@@ -153,7 +153,7 @@ namespace ConceptMapper
 		private void DrawNodesAndEdges( )
 		{
 			this.canvas.Children.Clear( );
-			this.canvas.Background = this.imageFile is not null ? new ImageBrush( new BitmapImage( new System.Uri( this.imageFile ) ) ) : Brushes.LightGray;
+			this.canvas.Background = this.model.ImageFilePath is not null ? new ImageBrush( new BitmapImage( this.model.ImageFilePath ) ) : Brushes.LightGray;
 
 			List<MapNode> graph = this.model.AllNodes;
 			List<MapNode> drawn = new( graph.Count );

@@ -28,17 +28,26 @@ namespace ConceptMapper
 
 		private void Menu_ResetImage( object sender , RoutedEventArgs e ) => this.viewModel.ResetCanvas( );
 
-		private void Menu_SelectImage( object sender , RoutedEventArgs e )
+		private void Menu_SelectImageFile( object sender , RoutedEventArgs e )
 		{
 			OpenFileDialog dialog = new( );
 			if ( dialog.ShowDialog( ) is true )
 			{
-				this.viewModel.SetFile( dialog.FileName );
+				this.viewModel.ImageFile = dialog.FileName;
+			}
+		}
+
+		private void Menu_SelectOutputFile( object sender , RoutedEventArgs e )
+		{
+			OpenFileDialog dialog = new( );
+			if ( dialog.ShowDialog( ) is true )
+			{
+				this.viewModel.OutputFile = dialog.FileName;
 			}
 		}
 
 		private void Menu_About( object sender , RoutedEventArgs e ) => _ = MessageBox.Show( "Title: Concept Mapper\nAuthor: Jacob Mekker\n\nDescription:\nTODO\nLicense:\nTODO" );
 
-		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done();
+		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done( );
 	}
 }

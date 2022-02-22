@@ -6,12 +6,12 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:ConceptMapper" d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
 		mc:Ignorable="d"
-        Title="{Binding File}" Height="auto" Width="auto">
+        Title="{Binding ImageFile}" Height="auto" Width="auto">
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
-				<MenuItem Header="Select map image..." Click="Menu_SelectImage"/>
-				<MenuItem Header="Select output file..."/>
+				<MenuItem Header="Select map image..." Click="Menu_SelectImageFile"/>
+				<MenuItem Header="Select output file..." Click="Menu_SelectOutputFile"/>
 				<MenuItem Header="Reset current image" Click="Menu_ResetImage"/>
 			</MenuItem>
 			<MenuItem Header="View">
@@ -19,7 +19,7 @@
 				<MenuItem IsCheckable="True" IsChecked="{Binding ShowRoot}" Header="Highlight (yellow fill) root node"/>
 				<MenuItem IsCheckable="True" IsChecked="{Binding ShowMainIdeas}" Header="Highlight (orange fill) main ideas"/>
 			</MenuItem>
-			<MenuItem Header="Image"><!-- TODO? --></MenuItem>
+			<!-- TODO <MenuItem Header="Image"></MenuItem>-->
 			<MenuItem Header="About" Click="Menu_About"/>
 		</Menu>
 		<GroupBox DockPanel.Dock="Right" Header="Calculations">
@@ -70,10 +70,12 @@
 			</Grid>
 		</GroupBox>
 		<StatusBar DockPanel.Dock="Bottom">
-			<Label Content="Nodes: " />
-			<Label Content="{Binding NumNodes}" />
-			<Label Content="    Edges: " />
-			<Label Content="{Binding NumEdges}" />
+			<Label Content="Nodes: "/>
+			<Label Content="{Binding NumNodes}" MinWidth="25"/>
+			<Label Content="Edges: " Margin="20,0,0,0"/>
+			<Label Content="{Binding NumEdges}" MinWidth="25"/>
+			<Label Content="Output File: "  Margin="20,0,0,0" />
+			<Label Content="{Binding OutputFile}"/>
 		</StatusBar>
 		<Canvas x:Name="Canvas" Background="LightGray" MinHeight="300" MinWidth="400" MouseLeftButtonUp="Canvas_MouseLeftButtonUp" MouseRightButtonUp="Canvas_MouseRightButtonUp" />
 	</DockPanel>
