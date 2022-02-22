@@ -25,7 +25,7 @@ namespace ConceptMapper
 
 		public string ImageFile
 		{
-			get => this.model.ImageFilePath?.AbsoluteUri ?? "Concept Mapper";
+			get => this.model.ImageFilePath?.LocalPath ?? "Concept Mapper";
 			set
 			{
 				this.model.ImageFilePath = new Uri( value );
@@ -34,7 +34,7 @@ namespace ConceptMapper
 		}
 		public string OutputFile
 		{
-			get => this.model.OutputFilePath?.AbsoluteUri ?? "not selected";
+			get => this.model.OutputFilePath?.LocalPath ?? "not selected";
 			set
 			{
 				this.model.OutputFilePath = new Uri( value );
@@ -139,6 +139,7 @@ namespace ConceptMapper
 
 			if ( this.PropertyChanged is not null )
 			{
+				// I know it's not the best practice to update everything everytime... but who cares
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumNodes ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumEdges ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Width ) ) );
@@ -146,8 +147,9 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
-				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.PriorKnowledge ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFile ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.OutputFile ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.IsCompletable ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
 			}
 		}

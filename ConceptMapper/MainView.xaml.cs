@@ -40,7 +40,8 @@ namespace ConceptMapper
 		private void Menu_SelectOutputFile( object sender , RoutedEventArgs e )
 		{
 			SaveFileDialog dialog = new( );
-			dialog.Filter = "*.csv";
+			dialog.Filter = "Comma-Separated Value files (*csv)|*.csv";
+			dialog.AddExtension = true;
 			if ( dialog.ShowDialog( ) is true )
 			{
 				this.viewModel.OutputFile = dialog.FileName;

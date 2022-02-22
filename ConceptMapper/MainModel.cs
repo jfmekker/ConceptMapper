@@ -85,20 +85,20 @@ namespace ConceptMapper
 		{
 			if ( !this.IsCompletable )
 			{
-				throw new Exception( "Done was executed when IsCompletable was false." );
+				throw new InvalidOperationException( "Done was executed when IsCompletable was false." );
 			}
 
-			bool writeHeader = !File.Exists( this.OutputFilePath!.AbsoluteUri );
-			using StreamWriter writer = new( this.OutputFilePath!.AbsoluteUri , true );
+			bool writeHeader = !File.Exists( this.OutputFilePath!.LocalPath );
+			using StreamWriter writer = new( this.OutputFilePath!.LocalPath , true );
 
 			if ( writeHeader )
 			{
 				writer.WriteLine( "Image,Width,Depth,HSS,NumMainIdeas,MaxNumOfDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
 			}
 
-			writer.WriteLine( "" );
-
-			// write info
+			string info = $"{this.ImageFilePath!.LocalPath},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
+			Debug.WriteLine( $"Model: {info}" );
+			writer.WriteLine( info );
 		}
 
 		private void CalculateWidthAndDepth( )
@@ -168,11 +168,6 @@ namespace ConceptMapper
 
 			// Subtract 1 to not count the main idea itself
 			this.MaxNumDetails = max - 1;
-		}
-
-		private string ImageInfoLine( )
-		{
-			return $"";
 		}
 	}
 }
