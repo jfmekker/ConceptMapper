@@ -70,10 +70,14 @@ namespace ConceptMapper
 
 		public bool IsCompletable => this.model.IsCompletable;
 		public string CompletableTooltip =>
-			( this.IsCompletable ? "Good to go! :)" : "Can not complete because:" ) +
-			( this.model.Root is null ? "\n - No nodes have been placed." : "" ) +
-			( this.model.ImageFilePath is null ? "\n - No image file has been selected." : "" ) +
-			( this.model.OutputFilePath is null ? "\n - No output file has been selected." : "" );
+			this.IsCompletable ? "Good to go! :)" : ("Can not complete because:" +
+			(this.model.Root is null ? "\n - No nodes have been placed." : "") +
+			(this.model.ImageFilePath is null ? "\n - No image file has been selected." : "") +
+			(this.model.OutputFilePath is null ? "\n - No output file has been selected." : "") +
+			(this.model.PriorKnowledge is null ? "\n - Field 'Prior Knowledge' is empty." : "") +
+			(this.model.Questions is null ? "\n - Field 'Questions' is empty." : "") +
+			(this.model.NumCrosslinks is null ? "\n - Field '# Crosslinks' is empty." : "") +
+			(this.model.MaxCrosslinkDist is null ? "\n - Field 'Max Crosslink dist.' is empty." : ""));
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -102,7 +106,7 @@ namespace ConceptMapper
 			// Set or reset current node
 			else if ( selected is not null )
 			{
-				Debug.WriteLine( $"ViewModel: Setting current node to {( selected == current ? "null" : selected )}." );
+				Debug.WriteLine( $"ViewModel: Setting current node to {(selected == current ? "null" : selected)}." );
 				this.model.Current = selected == current ? null : selected;
 			}
 			// Add a new node
@@ -176,6 +180,10 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Hss ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumMainIdeas ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxNumDetails ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.PriorKnowledge ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Questions ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumCrosslinks ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.MaxCrosslinkDist ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFile ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.ImageFolder ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.OutputFile ) ) );

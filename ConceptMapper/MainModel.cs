@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConceptMapper
 {
@@ -31,7 +26,19 @@ namespace ConceptMapper
 		public Uri? ImageFilePath { get; set; }
 		public Uri? OutputFilePath { get; set; }
 
-		public bool IsCompletable => this.Root is not null && this.ImageFilePath is not null && this.OutputFilePath is not null;
+		public bool IsCompletable
+		{
+			get
+			{
+				return this.Root is not null
+					&& this.ImageFilePath is not null
+					&& this.OutputFilePath is not null
+					&& this.PriorKnowledge is not null
+					&& this.Questions is not null
+					&& this.NumCrosslinks is not null
+					&& this.MaxCrosslinkDist is not null;
+			}
+		}
 
 		public void AddNode( MapNode node )
 		{
@@ -79,6 +86,11 @@ namespace ConceptMapper
 			this.Width = 0;
 			this.Depth = 0;
 			this.MaxNumDetails = 0;
+
+			this.PriorKnowledge = null;
+			this.Questions = null;
+			this.NumCrosslinks = null;
+			this.MaxCrosslinkDist = null;
 		}
 
 		public void DeleteCurrentNode( )
