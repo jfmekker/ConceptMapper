@@ -31,7 +31,7 @@
 				<Hyperlink NavigateUri="https://github.com/jfmekker/ConceptMapper">link</Hyperlink>
 			</TextBlock>
 		</Label>
-		<Label Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Right">2022-02-22</Label>
+		<Label Grid.Column="1" Grid.Row="3" HorizontalContentAlignment="Right">2022-03-20</Label>
 		<TextBlock Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="2,5,2,5" FontSize="8" TextWrapping="Wrap">
 			MIT License -- Copyright (c) 2022 Jacob Mekker<LineBreak/>
 			Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -59,16 +59,16 @@
 			1) Place all concept map image files in a single folder with no other files.<LineBreak/>
 			2) Click "File→Select map image..." and navigate to the folder and select an image. Select the top file (alphabetically), or the file after the last completed image.<LineBreak/>
 			3) Click "File→Select output file..." and select a CSV file to save the information to. If the file does not exist, it will be created.<LineBreak/>
-			4) Use the left mouse button to place nodes and connection to build the concept map.<LineBreak/>
+			4) Use the mouse buttons to place nodes and connections to build the concept map.<LineBreak/>
 			5) Fill the fields that need to be manually filled.<LineBreak/>
 			6) Click "Done". This will export the information on the current image to a new line in the output file, then select the next image file in the same folder.<LineBreak/>
 			<LineBreak/>
 			Notes:<LineBreak/>
 			- When no nodes are placed, left clicking will place the root node.<LineBreak/>
-			- The current node has a green outline (instead of red).<LineBreak/>
-			- Clicking the current node, or clicking the right mouse button will un-select the current node. When there is no current node, clicking on one will select it as current.<LineBreak/>
+			- The current node has a thick black outline (instead of red).<LineBreak/>
+			- Clicking the current node, or right clicking empty space will un-select the current node. When there is no current node, clicking on one will select it as current.<LineBreak/>
 			- Creating a new node can only be done when a current node is selected. The new node will have have a connection to the current one, then the new node will be selected as current.<LineBreak/>
-			- A new connection can be added to the current selected node by clicking another node.<LineBreak/>
+			- A new connection can be added to the current selected node by clicking another node. Right clicking will add a crosslink instead of an edge.<LineBreak/>
 			- The current selected node can be removed with the "Delete" or "Backspace" keys. Any nodes not connected to the root node will also be removed.
 		</TextBlock>
 	</Grid>

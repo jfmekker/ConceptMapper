@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -19,6 +20,10 @@ namespace ConceptMapper
 		private readonly MainModel model;
 		private readonly Canvas canvas;
 
+		/// <summary>
+		/// Create a new instance of the <see cref="MainViewModel"/> class.
+		/// </summary>
+		/// <param name="canvas">Canvas to draw nodes on.</param>
 		public MainViewModel( Canvas canvas )
 		{
 			this.canvas = canvas;
@@ -48,13 +53,37 @@ namespace ConceptMapper
 			);
 		}
 
+		/// <summary>
+		/// Folder containg the selected image file.
+		/// </summary>
 		public string? ImageFolder { get; set; }
+
+		/// <summary>
+		/// Option to automatically change to the next image in the folder when
+		/// the "Done" button is clicked.
+		/// </summary>
 		public bool AutoNextImage { get; set; } = true;
 
+		/// <summary>
+		/// Command to increase the size of the nodes.
+		/// </summary>
 		public RelayCommand NodeIncreaseSizeCommand { get; }
+
+		/// <summary>
+		/// Command to decrease the size of the nodes.
+		/// </summary>
 		public RelayCommand NodeDecreaseSizeCommand { get; }
+
+		/// <summary>
+		/// Command to reset the size of the nodes to default.
+		/// </summary>
 		public RelayCommand NodeResetSizeCommand { get; }
 
+		/// <inheritdoc cref="MainModel.ImageFilePath"/>
+		/// <remarks>
+		/// If <see cref="MainModel.ImageFilePath"/> is <see langword="null"/>
+		/// then this equals <c>"Concept Mapper"</c>.
+		/// </remarks>
 		public string ImageFile
 		{
 			get => this.model.ImageFilePath?.LocalPath ?? "Concept Mapper";
@@ -66,6 +95,12 @@ namespace ConceptMapper
 				this.Update( );
 			}
 		}
+
+		/// <inheritdoc cref="MainModel.OutputFilePath"/>
+		/// <remarks>
+		/// If <see cref="MainModel.OutputFilePath"/> is <see langword="null"/>
+		/// then this equals <c>"not selected"</c>.
+		/// </remarks>
 		public string OutputFile
 		{
 			get => this.model.OutputFilePath?.LocalPath ?? "not selected";
@@ -76,37 +111,81 @@ namespace ConceptMapper
 			}
 		}
 
+		/// <inheritdoc cref="MainModel.NumNodes"/>
 		public int NumNodes => this.model.NumNodes;
+
+		/// <inheritdoc cref="MainModel.NumEdges"/>
 		public int NumEdges => this.model.NumEdges;
 
+		/// <inheritdoc cref="MainModel.Depth"/>
 		public int Depth => this.model.Depth;
+
+		/// <inheritdoc cref="MainModel.Width"/>
 		public int Width => this.model.Width;
+
+		/// <inheritdoc cref="MainModel.HSS"/>
 		public int Hss => this.model.Hss;
-		public int NumMainIdeas => this.model.MainIdeas.Count;
+
+		/// <inheritdoc cref="MainModel.NumMainIdeas"/>
+		public int NumMainIdeas => this.model.NumMainIdeas;
+
+		/// <inheritdoc cref="MainModel.MaxNumDetails"/>
 		public int MaxNumDetails => this.model.MaxNumDetails;
+
+		/// <inheritdoc cref="MainModel.NumCrosslinks"/>
 		public int NumCrosslinks => this.model.NumCrosslinks;
+
+		/// <inheritdoc cref="MainModel.MaxCrosslinkDist"/>
 		public int MaxCrosslinkDist => this.model.MaxCrosslinkDist;
 
+		/// <inheritdoc cref="MainModel.PriorKnowledge"/>
 		public int? PriorKnowledge { get => this.model.PriorKnowledge; set => this.model.PriorKnowledge = value; }
+
+		/// <inheritdoc cref="MainModel.Questions"/>
 		public int? Questions { get => this.model.Questions; set => this.model.Questions = value; }
 
+		/// <summary>
+		/// Option to display the current selected node differently.
+		/// </summary>
 		public bool ShowCurrent { get; set; } = true;
+
+		/// <summary>
+		/// Option to display the root node differently.
+		/// </summary>
 		public bool ShowRoot { get; set; } = true;
+
+		/// <summary>
+		/// Option to display the main idea nodes differently.
+		/// </summary>
 		public bool ShowMainIdeas { get; set; } = true;
 
+		/// <inheritdoc cref="MainModel.IsCompletable"/>
 		public bool IsCompletable => this.model.IsCompletable;
+
+		/// <summary>
+		/// Tooltip string to attach to the "Done" button. Tells
+		/// the user what actions (if any) need to be taken.
+		/// </summary>
 		public string CompletableTooltip =>
 			this.IsCompletable ? "Good to go! :)" : ("Can not complete because:" +
 			(this.model.Root is null ? "\n - No nodes have been placed." : "") +
 			(this.model.ImageFilePath is null ? "\n - No image file has been selected." : "") +
 			(this.model.OutputFilePath is null ? "\n - No output file has been selected." : ""));
 
+		/// <summary>
+		/// Event to raise when a propety changes.
+		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
 
+		/// <summary>
+		/// Handle a user clicking a point on the canvas.
+		/// </summary>
+		/// <param name="point">Relative point of the click.</param>
+		/// <param name="rightClick">Whether this was a right click.</param>
 		public void Click( Point point , bool rightClick = false )
 		{
 			// Check if the click was in an existing node
-			List<MapNode> graph = this.model.AllNodes;
+			IReadOnlyList<MapNode> graph = this.model.AllNodes;
 			MapNode? current = this.model.Current;
 			MapNode? selected = null;
 			foreach ( MapNode node in graph )
@@ -123,12 +202,12 @@ namespace ConceptMapper
 			{
 				if ( !rightClick )
 				{
-					Debug.WriteLine( $"ViewModel: Adding edge from ({selected.Position.X}, {selected.Position.Y}) to ({current.Position.X}, {current.Position.Y})." );
+					Debug.WriteLine( $"ViewModel: Adding edge from ({selected.X}, {selected.Y}) to ({current.X}, {current.Y})." );
 					this.model.AddEdge( selected , current );
 				}
 				else
 				{
-					Debug.WriteLine( $"ViewModel: Adding crosslink from ({selected.Position.X}, {selected.Position.Y}) to ({current.Position.X}, {current.Position.Y})." );
+					Debug.WriteLine( $"ViewModel: Adding crosslink from ({selected.X}, {selected.Y}) to ({current.X}, {current.Y})." );
 					this.model.AddCrosslink( selected , current );
 				}
 				this.model.Current = selected;
@@ -159,12 +238,18 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
+		/// <inheritdoc cref="MainModel.ResetGraph"/>
 		public void ResetGraph( )
 		{
 			this.model.ResetGraph( );
 			this.Update( );
 		}
 
+		/// <inheritdoc cref="MainModel.Export(RenderTargetBitmap?)"/>
+		/// <remarks>
+		/// After exporting, the next image is selected if <see cref="AutoNextImage"/> is on,
+		/// then <see cref="ResetGraph"/> is called.
+		/// </remarks>
 		public void Done( RenderTargetBitmap? bitmap = null )
 		{
 			this.model.Export( bitmap );
@@ -189,6 +274,7 @@ namespace ConceptMapper
 			this.ResetGraph( );
 		}
 
+		/// <inheritdoc cref="MainModel.DeleteCurrentNode"/>
 		public void DeleteCurrent( )
 		{
 			this.model.DeleteCurrentNode( );
@@ -230,7 +316,7 @@ namespace ConceptMapper
 			this.canvas.Children.Clear( );
 			this.canvas.Background = this.model.ImageFilePath is not null ? new ImageBrush( new BitmapImage( this.model.ImageFilePath ) ) : Brushes.LightGray;
 
-			List<MapNode> graph = this.model.AllNodes;
+			IReadOnlyList<MapNode> graph = this.model.AllNodes;
 			List<MapNode> drawn = new( graph.Count );
 			Debug.WriteLine( $"ViewModel: Redrawing {this.NumNodes} nodes and {this.NumEdges} edges." );
 

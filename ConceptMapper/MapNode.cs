@@ -6,32 +6,78 @@ using System.Windows.Shapes;
 
 namespace ConceptMapper
 {
+	/// <summary>
+	/// Object to represent a node in a concept map graph.
+	/// </summary>
 	public class MapNode
 	{
 		private static int nextId;
 
+		/// <summary>
+		/// The default radius of nodes when displayed.
+		/// </summary>
+		/// <remarks>
+		/// Not sure if this is pixels or dpi.
+		/// </remarks>
 		public const int DefaultRadius = 25;
+
+		/// <summary>
+		/// The minimum radius of nodes when displayed.
+		/// </summary>
+		/// <remarks>
+		/// Not sure if this is pixels or dpi.
+		/// </remarks>
 		public const int MinRadius = 10;
+
+		/// <summary>
+		/// The maximum radius of nodes when displayed.
+		/// </summary>
+		/// <remarks>
+		/// Not sure if this is pixels or dpi.
+		/// </remarks>
 		public const int MaxRadius = 55;
 
+		/// <summary>
+		/// The current radius used to display nodes.
+		/// </summary>
 		public static int Radius { get; set; } = DefaultRadius;
 
+		/// <summary>
+		/// Create a new instance of the <see cref="MapNode"/> class.
+		/// </summary>
+		/// <param name="point">Center point of the node.</param>
 		public MapNode( Point point )
 		{
 			this.ID = nextId++;
-			this.Position = point;
+			this.position = point;
 		}
 
+		/// <summary>
+		/// Unique (per-run) ID for this node. Only used for debugging purposes.
+		/// </summary>
 		public int ID { get; init; }
 
-		public Point Position { get; set; }
+		private readonly Point position;
 
-		public int X => this.Position.X;
+		/// <summary>
+		/// Cartesian x coordinate of the node on the canvas.
+		/// </summary>
+		public int X => this.position.X;
 
-		public int Y => this.Position.Y;
+		/// <summary>
+		/// Cartesian y coordinate of the node on the canvas.
+		/// </summary>
+		public int Y => this.position.Y;
 
+		/// <summary>
+		/// Collection of nodes directly connected to this node.
+		/// </summary>
 		public List<MapNode> Neighbors { get; set; } = new( );
 
+		/// <summary>
+		/// Flatten the entire graph connected to this node into a list.
+		/// </summary>
+		/// <returns>All connected (directly and indirectly) nodes.</returns>
 		public List<MapNode> GetWholeGraph( )
 		{
 			List<MapNode> level = new( ) { this };
@@ -58,6 +104,7 @@ namespace ConceptMapper
 			return all;
 		}
 
+		/// <inheritdoc/>
 		public override string? ToString( )
 		{
 			string str = $"Node #{this.ID}: ";
@@ -70,6 +117,12 @@ namespace ConceptMapper
 			return str;
 		}
 
+		/// <summary>
+		/// Compute the minimum graph distance to another node.
+		/// </summary>
+		/// <exception cref="InvalidOperationException">Thrown if the other node is not connected.</exception>
+		/// <param name="other">Other node to reach.</param>
+		/// <returns>Number of "hops" to get to the other node.</returns>
 		public int DistanceTo( MapNode other )
 		{
 			int dist = 0;
@@ -101,8 +154,17 @@ namespace ConceptMapper
 			return all.Contains( other ) ? dist : throw new InvalidOperationException( "Nodes were not connected when DistanceTo was called." );
 		}
 
+		/// <summary>
+		/// Compute the Cartesian distance to a point relative to the node's center.
+		/// </summary>
+		/// <param name="other">Point to measure to.</param>
+		/// <returns>Distance to the other point.</returns>
 		public double DistanceTo( Point other ) => Math.Sqrt( Math.Pow( this.X - other.X , 2 ) + Math.Pow( this.Y - other.Y , 2 ) );
 
+		/// <summary>
+		/// Construct this node as a <see cref="Shape"/> object.
+		/// </summary>
+		/// <returns>An <see cref="Ellipse"/> representing the node.</returns>
 		public Shape AsShape( )
 		{
 			if ( Radius is < 10 or > 100 )
@@ -117,6 +179,11 @@ namespace ConceptMapper
 			return e;
 		}
 
+		/// <summary>
+		/// Construct a <see cref="Line"/> object to another node.
+		/// </summary>
+		/// <param name="that">Destination node.</param>
+		/// <returns>A <see cref="Line"/> to the other node.</returns>
 		public Line MakeLineTo( MapNode that )
 		{
 			if ( Radius is < 10 or > 100 )

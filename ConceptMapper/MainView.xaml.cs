@@ -14,6 +14,11 @@ namespace ConceptMapper
 	{
 		private readonly MainViewModel viewModel;
 
+		/// <summary>
+		/// Create a new instance of the <see cref="MainView"/> class.
+		/// Starts a new <see cref="MainViewModel"/> (and by extension,
+		/// a new <see cref="MainModel"/>).
+		/// </summary>
 		public MainView( )
 		{
 			this.InitializeComponent( );
@@ -22,20 +27,30 @@ namespace ConceptMapper
 			this.viewModel.ResetGraph( );
 		}
 
+		/// <summary>
+		/// Pass a left mouse click on the canvas to <see cref="MainViewModel"/>.
+		/// </summary>
 		private void Canvas_MouseLeftButtonUp( object sender , MouseButtonEventArgs e )
 		{
 			Point spot = e.GetPosition( this.Canvas );
 			this.viewModel.Click( new( (int)spot.X , (int)spot.Y ) );
 		}
 
+		/// <summary>
+		/// Pass a right mouse click on the canvas to <see cref="MainViewModel"/>.
+		/// </summary>
 		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e )
 		{
 			Point spot = e.GetPosition( this.Canvas );
 			this.viewModel.Click( new( (int)spot.X , (int)spot.Y ) , true );
 		}
 
+		/// <inheritdoc cref="MainViewModel.ResetGraph"/>
 		private void Menu_ResetGraph( object sender , RoutedEventArgs e ) => this.viewModel.ResetGraph( );
 
+		/// <summary>
+		/// Create a dialog box to select an existing image file.
+		/// </summary>
 		private void Menu_SelectImageFile( object sender , RoutedEventArgs e )
 		{
 			OpenFileDialog dialog = new( );
@@ -45,6 +60,9 @@ namespace ConceptMapper
 			}
 		}
 
+		/// <summary>
+		/// Create a dialog box to select or create a output CSV file.
+		/// </summary>
 		private void Menu_SelectOutputFile( object sender , RoutedEventArgs e )
 		{
 			SaveFileDialog dialog = new( );
@@ -58,19 +76,45 @@ namespace ConceptMapper
 			}
 		}
 
+		/// <summary>
+		/// Create and show the <see cref="AboutWindow"/>.
+		/// </summary>
 		private void Menu_About( object sender , RoutedEventArgs e ) => new AboutWindow( ).ShowDialog( );
 
+		/// <inheritdoc cref="MainViewModel.Done"/>
 		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done( this.GetImage( ) );
 
+		/// <summary>
+		/// Handle a key press when the window has focus.
+		/// </summary>
+		/// <remarks>
+		/// <list type="table">
+		///		<item>
+		///			<term>Delete</term>
+		///			<description><see cref="MainViewModel.DeleteCurrent"/></description>
+		///		</item>
+		///		<item>
+		///			<term>Escape</term>
+		///			<description><see cref="MainViewModel.DeleteCurrent"/></description>
+		///		</item>
+		/// </list>
+		/// </remarks>
+		/// <param name="sender">N/A</param>
+		/// <param name="e">Event args that contain the key pressed.</param>
 		private void Window_KeyDown( object sender , KeyEventArgs e )
 		{
 			Debug.WriteLine( $"View: Key pressed - '{e.Key}'" );
 			if ( e.Key is Key.Delete or Key.Back )
 			{
 				this.viewModel.DeleteCurrent( );
+				e.Handled = true;
 			}
 		}
 
+		/// <summary>
+		/// Get a PNG screenshot of the window.
+		/// </summary>
+		/// <returns></returns>
 		private RenderTargetBitmap? GetImage( )
 		{
 			var size = new Size( this.ActualWidth , this.ActualHeight );

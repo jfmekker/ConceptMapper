@@ -24,8 +24,7 @@
 				<MenuItem Header="Decrease node size" Command="{Binding NodeDecreaseSizeCommand}"/>
 				<MenuItem Header="Reset node size" Command="{Binding NodeResetSizeCommand}"/>
 			</MenuItem>
-			<!-- TODO <MenuItem Header="Image"></MenuItem>-->
-			<MenuItem Header="About" Click="Menu_About"/>
+			<MenuItem Header="About / Instructions" Click="Menu_About"/>
 		</Menu>
 		<GroupBox DockPanel.Dock="Right" Header="Calculations">
 			<Grid>
