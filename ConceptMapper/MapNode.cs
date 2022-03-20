@@ -70,7 +70,36 @@ namespace ConceptMapper
 			return str;
 		}
 
-		public double DistanceTo( MapNode other ) => Math.Sqrt( Math.Pow( this.X - other.X , 2 ) + Math.Pow( this.Y - other.Y , 2 ) );
+		public int DistanceTo( MapNode other )
+		{
+			int dist = 0;
+			List<MapNode> level = new( ) { this };
+			List<MapNode> all = new( ) { };
+			while ( level.Count > 0 )
+			{
+				all.AddRange( level );
+
+				if ( level.Contains( other ) )
+					break;
+
+				List<MapNode> newLevel = new( );
+				foreach ( MapNode node in level )
+				{
+					foreach ( MapNode next in node.Neighbors )
+					{
+						if ( !all.Contains( next ) && !newLevel.Contains( next ) )
+						{
+							newLevel.Add( next );
+						}
+					}
+				}
+
+				level = newLevel;
+				dist += 1;
+			}
+
+			return all.Contains( other ) ? dist : throw new InvalidOperationException( "Nodes were not connected when DistanceTo was called." );
+		}
 
 		public double DistanceTo( Point other ) => Math.Sqrt( Math.Pow( this.X - other.X , 2 ) + Math.Pow( this.Y - other.Y , 2 ) );
 

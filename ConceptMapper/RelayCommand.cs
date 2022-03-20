@@ -11,8 +11,8 @@ namespace ConceptMapper
 	{
 		public event EventHandler? CanExecuteChanged;
 
-		private Func<bool> canExecute;
-		private Action execute;
+		private readonly Func<bool> canExecute;
+		private readonly Action execute;
 
 		public RelayCommand( Func<bool> canExecute , Action execute )
 		{

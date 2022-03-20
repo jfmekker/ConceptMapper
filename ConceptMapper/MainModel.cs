@@ -177,7 +177,7 @@ namespace ConceptMapper
 		{
 			this.CalculateWidthAndDepth( );
 			this.CalculateMaxNumDetails( );
-			this.CalculateCrosslinks( );
+			this.CalculateCrosslinkDist( );
 		}
 
 		private void CalculateWidthAndDepth( )
@@ -249,9 +249,16 @@ namespace ConceptMapper
 			this.MaxNumDetails = max - 1;
 		}
 
-		private void CalculateCrosslinks( )
+		private void CalculateCrosslinkDist( )
 		{
+			int maxDist = 0;
 
+			foreach ( (MapNode n1, MapNode n2) in this.Crosslinks )
+			{
+				maxDist = Math.Max( maxDist , n1.DistanceTo( n2 ) );
+			}
+
+			this.MaxCrosslinkDist = maxDist;
 		}
 	}
 }
