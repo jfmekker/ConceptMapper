@@ -28,7 +28,11 @@ namespace ConceptMapper
 			this.viewModel.Click( new( (int)spot.X , (int)spot.Y ) );
 		}
 
-		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e ) => this.viewModel.ResetCurrent( );
+		private void Canvas_MouseRightButtonUp( object sender , MouseButtonEventArgs e )
+		{
+			Point spot = e.GetPosition( this.Canvas );
+			this.viewModel.Click( new( (int)spot.X , (int)spot.Y ) , true );
+		}
 
 		private void Menu_ResetGraph( object sender , RoutedEventArgs e ) => this.viewModel.ResetGraph( );
 

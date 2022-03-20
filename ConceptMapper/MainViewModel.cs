@@ -103,7 +103,7 @@ namespace ConceptMapper
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
-		public void Click( Point point )
+		public void Click( Point point , bool rightClick = false )
 		{
 			// Check if the click was in an existing node
 			List<MapNode> graph = this.model.AllNodes;
@@ -121,9 +121,23 @@ namespace ConceptMapper
 			// Add edge between two existing nodes
 			if ( selected is not null && current is not null && selected != current )
 			{
-				Debug.WriteLine( $"ViewModel: Adding edge from ({selected.Position.X}, {selected.Position.Y}) to ({current.Position.X}, {current.Position.Y})." );
-				this.model.AddEdge( selected , current );
+				if ( !rightClick )
+				{
+					Debug.WriteLine( $"ViewModel: Adding edge from ({selected.Position.X}, {selected.Position.Y}) to ({current.Position.X}, {current.Position.Y})." );
+					this.model.AddEdge( selected , current );
+				}
+				else
+				{
+					Debug.WriteLine( $"ViewModel: Adding crosslink from ({selected.Position.X}, {selected.Position.Y}) to ({current.Position.X}, {current.Position.Y})." );
+					this.model.AddCrosslink( selected , current );
+				}
 				this.model.Current = selected;
+			}
+			// Reset current node
+			else if ( rightClick )
+			{
+				Debug.WriteLine( $"ViewModel: Resetting current node." );
+				this.model.Current = null;
 			}
 			// Set or reset current node
 			else if ( selected is not null )
@@ -142,12 +156,6 @@ namespace ConceptMapper
 				Debug.WriteLine( $"ViewModel: Doing nothing." );
 			}
 
-			this.Update( );
-		}
-
-		public void ResetCurrent( )
-		{
-			this.model.Current = null;
 			this.Update( );
 		}
 
@@ -229,18 +237,12 @@ namespace ConceptMapper
 			foreach ( MapNode node in graph )
 			{
 				// Draw node with modifications if needed
-				Shape nodeShape = node.AsShape( );
-
-				_ = nodeShape
+				Shape nodeShape =
+					node.AsShape( )
 					.AsNormal( )
 					.AsCurrent( this.ShowCurrent && node == this.model.Current )
 					.AsRoot( this.ShowRoot && node == this.model.Root )
 					.AsMainIdea( this.ShowMainIdeas && this.model.MainIdeas.Contains( node ) );
-
-				if ( node == this.model.Current && this.ShowCurrent )
-				{
-					nodeShape.Stroke = Brushes.Green;
-				}
 
 				_ = this.canvas.Children.Add( nodeShape );
 				drawn.Add( node );
@@ -255,61 +257,13 @@ namespace ConceptMapper
 					}
 				}
 			}
-		}
-	}
 
-	internal static class ConceptMapperDrawingExtensions
-	{
-		public static Shape AsNormal( this Shape shape )
-		{
-			shape.Opacity = 0.5;
-
-			shape.Fill = Brushes.Green.Clone( );
-			shape.Fill.Opacity = 0.25;
-
-			shape.StrokeThickness = 2;
-			shape.Stroke = Brushes.Red;
-
-			return shape;
-		}
-
-		public static Shape AsRoot( this Shape shape , bool yes )
-		{
-			if ( yes )
+			// Draw crosslink edges
+			foreach ( (MapNode node1, MapNode node2) in this.model.Crosslinks )
 			{
-				shape.Fill = Brushes.Yellow.Clone( );
-				shape.Fill.Opacity = 0.25;
+				Line linkLine = node1.MakeLineTo( node2 ).AsCrosslink( );
+				_ = this.canvas.Children.Add( linkLine );
 			}
-			return shape;
-		}
-
-		public static Shape AsMainIdea( this Shape shape , bool yes )
-		{
-			if ( yes )
-			{
-				shape.Fill = Brushes.Orange.Clone( );
-				shape.Fill.Opacity = 0.25;
-			}
-			return shape;
-		}
-
-		public static Shape AsCurrent( this Shape shape , bool yes )
-		{
-			if ( yes )
-			{
-				shape.Stroke = Brushes.Green;
-			}
-			return shape;
-		}
-
-		public static Line AsNormal( this Line line )
-		{
-			line.Opacity = 0.5;
-
-			line.StrokeThickness = 2;
-			line.Stroke = Brushes.Red;
-
-			return line;
 		}
 	}
 }

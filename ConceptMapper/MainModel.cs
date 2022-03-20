@@ -72,7 +72,8 @@ namespace ConceptMapper
 
 		public void AddCrosslink( MapNode node1 , MapNode node2 )
 		{
-			bool existing = false;
+			// Check if an edge or crosslink already exists
+			bool existing = node1.Neighbors.Contains( node2 );
 			foreach ( (MapNode, MapNode) crosslink in this.Crosslinks )
 			{
 				if ( crosslink == (node1, node2) || crosslink == (node2, node1) )
