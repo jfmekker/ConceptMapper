@@ -82,9 +82,6 @@ namespace ConceptMapper
 			var e = new Ellipse( ) {
 				Width = Radius * 2 ,
 				Height = Radius * 2 ,
-				Opacity = 0.5 ,
-				StrokeThickness = 2 ,
-				Stroke = Brushes.Red ,
 				RenderTransform = new TranslateTransform( this.X - Radius , this.Y - Radius ) ,
 			};
 
@@ -105,9 +102,6 @@ namespace ConceptMapper
 				Y1 = this.Y + dy ,
 				X2 = that.X - dx ,
 				Y2 = that.Y - dy ,
-				Opacity = 0.5 ,
-				StrokeThickness = 2 ,
-				Stroke = Brushes.Red ,
 			};
 
 			return l;

@@ -84,11 +84,11 @@ namespace ConceptMapper
 		public int Hss => this.model.Hss;
 		public int NumMainIdeas => this.model.MainIdeas.Count;
 		public int MaxNumDetails => this.model.MaxNumDetails;
+		public int NumCrosslinks => this.model.NumCrosslinks;
+		public int MaxCrosslinkDist => this.model.MaxCrosslinkDist;
 
 		public int? PriorKnowledge { get => this.model.PriorKnowledge; set => this.model.PriorKnowledge = value; }
 		public int? Questions { get => this.model.Questions; set => this.model.Questions = value; }
-		public int? NumCrosslinks { get => this.model.NumCrosslinks; set => this.model.NumCrosslinks = value; }
-		public int? MaxCrosslinkDist { get => this.model.MaxCrosslinkDist; set => this.model.MaxCrosslinkDist = value; }
 
 		public bool ShowCurrent { get; set; } = true;
 		public bool ShowRoot { get; set; } = true;
@@ -231,21 +231,11 @@ namespace ConceptMapper
 				// Draw node with modifications if needed
 				Shape nodeShape = node.AsShape( );
 
-				if ( node == this.model.Root && this.ShowRoot )
-				{
-					nodeShape.Fill = Brushes.Yellow.Clone( );
-					nodeShape.Fill.Opacity = 0.25;
-				}
-				else if ( this.model.MainIdeas.Contains( node ) && this.ShowMainIdeas )
-				{
-					nodeShape.Fill = Brushes.Orange.Clone( );
-					nodeShape.Fill.Opacity = 0.25;
-				}
-				else
-				{
-					nodeShape.Fill = Brushes.Green.Clone( );
-					nodeShape.Fill.Opacity = 0.25;
-				}
+				_ = nodeShape
+					.AsNormal( )
+					.AsCurrent( this.ShowCurrent && node == this.model.Current )
+					.AsRoot( this.ShowRoot && node == this.model.Root )
+					.AsMainIdea( this.ShowMainIdeas && this.model.MainIdeas.Contains( node ) );
 
 				if ( node == this.model.Current && this.ShowCurrent )
 				{
@@ -260,11 +250,66 @@ namespace ConceptMapper
 				{
 					if ( !drawn.Contains( next ) )
 					{
-						Line edgeLine = node.MakeLineTo( next );
+						Line edgeLine = node.MakeLineTo( next ).AsNormal( );
 						_ = this.canvas.Children.Add( edgeLine );
 					}
 				}
 			}
+		}
+	}
+
+	internal static class ConceptMapperDrawingExtensions
+	{
+		public static Shape AsNormal( this Shape shape )
+		{
+			shape.Opacity = 0.5;
+
+			shape.Fill = Brushes.Green.Clone( );
+			shape.Fill.Opacity = 0.25;
+
+			shape.StrokeThickness = 2;
+			shape.Stroke = Brushes.Red;
+
+			return shape;
+		}
+
+		public static Shape AsRoot( this Shape shape , bool yes )
+		{
+			if ( yes )
+			{
+				shape.Fill = Brushes.Yellow.Clone( );
+				shape.Fill.Opacity = 0.25;
+			}
+			return shape;
+		}
+
+		public static Shape AsMainIdea( this Shape shape , bool yes )
+		{
+			if ( yes )
+			{
+				shape.Fill = Brushes.Orange.Clone( );
+				shape.Fill.Opacity = 0.25;
+			}
+			return shape;
+		}
+
+		public static Shape AsCurrent( this Shape shape , bool yes )
+		{
+			if ( yes )
+			{
+				shape.Stroke = Brushes.Green;
+			}
+			return shape;
+		}
+
+		public static Line AsNormal( this Line line )
+		{
+			line.Opacity = 0.5;
+
+			line.StrokeThickness = 2;
+			line.Stroke = Brushes.Red;
+
+			return line;
 		}
 	}
 }

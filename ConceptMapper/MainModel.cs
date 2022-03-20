@@ -14,19 +14,20 @@ namespace ConceptMapper
 
 		public List<MapNode> AllNodes => this.Root?.GetWholeGraph( ) ?? new( );
 		public List<MapNode> MainIdeas => this.Root?.Neighbors ?? new( );
+		public List<(MapNode, MapNode)> Crosslinks { get; } = new( );
 
 		public int Width { get; private set; }
 		public int Depth { get; private set; }
 		public int Hss => this.Width + this.Depth;
 		public int MaxNumDetails { get; private set; }
+		public int NumCrosslinks => this.Crosslinks.Count;
+		public int MaxCrosslinkDist { get; set; }
 
 		public int NumNodes => this.AllNodes.Count;
 		public int NumEdges => this.AllNodes.Sum( x => x.Neighbors.Count ) / 2;
 
 		public int? PriorKnowledge { get; set; }
 		public int? Questions { get; set; }
-		public int? NumCrosslinks { get; set; }
-		public int? MaxCrosslinkDist { get; set; }
 
 		public Uri? ImageFilePath { get; set; }
 		public Uri? OutputFilePath { get; set; }
@@ -47,8 +48,7 @@ namespace ConceptMapper
 				this.Current = node;
 			}
 
-			this.CalculateWidthAndDepth( );
-			this.CalculateMaxNumDetails( );
+			this.CalculateProperties( );
 		}
 
 		public void AddEdge( MapNode node1 , MapNode node2 )
@@ -67,8 +67,27 @@ namespace ConceptMapper
 				Debug.WriteLine( "Model: Node already contains edge, not adding duplicate." );
 			}
 
-			this.CalculateWidthAndDepth( );
-			this.CalculateMaxNumDetails( );
+			this.CalculateProperties( );
+		}
+
+		public void AddCrosslink( MapNode node1 , MapNode node2 )
+		{
+			bool existing = false;
+			foreach ( (MapNode, MapNode) crosslink in this.Crosslinks )
+			{
+				if ( crosslink == (node1, node2) || crosslink == (node2, node1) )
+				{
+					existing = true;
+					break;
+				}
+			}
+
+			if ( !existing )
+			{
+				this.Crosslinks.Add( (node1, node2) );
+			}
+
+			this.CalculateProperties( );
 		}
 
 		public void ResetGraph( )
@@ -76,14 +95,14 @@ namespace ConceptMapper
 			this.Current = null;
 			this.Root = null;
 
+			this.Crosslinks.Clear( );
+
 			this.Width = 0;
 			this.Depth = 0;
 			this.MaxNumDetails = 0;
-
+			this.MaxCrosslinkDist = 0;
 			this.PriorKnowledge = 0;
 			this.Questions = 0;
-			this.NumCrosslinks = 0;
-			this.MaxCrosslinkDist = 0;
 		}
 
 		public void DeleteCurrentNode( )
@@ -103,9 +122,17 @@ namespace ConceptMapper
 					_ = node.Neighbors.Remove( this.Current );
 				}
 
+				foreach ( (MapNode, MapNode) crosslink in this.Crosslinks )
+				{
+					if ( crosslink.Item1 == this.Current || crosslink.Item2 == this.Current )
+					{
+						_ = this.Crosslinks.Remove( crosslink );
+						break;
+					}
+				}
+
 				this.Current = null;
-				this.CalculateWidthAndDepth( );
-				this.CalculateMaxNumDetails( );
+				this.CalculateProperties( );
 			}
 		}
 
@@ -143,6 +170,13 @@ namespace ConceptMapper
 
 				encoder.Save( fs );
 			}
+		}
+
+		private void CalculateProperties( )
+		{
+			this.CalculateWidthAndDepth( );
+			this.CalculateMaxNumDetails( );
+			this.CalculateCrosslinks( );
 		}
 
 		private void CalculateWidthAndDepth( )
@@ -212,6 +246,11 @@ namespace ConceptMapper
 
 			// Subtract 1 to not count the main idea itself
 			this.MaxNumDetails = max - 1;
+		}
+
+		private void CalculateCrosslinks( )
+		{
+
 		}
 	}
 }
