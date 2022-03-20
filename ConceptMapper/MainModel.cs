@@ -265,13 +265,14 @@ namespace ConceptMapper
 		/// <param name="bitmap">Screenshot to save with "_nodes" as an added suffix to the filename.</param>
 		/// <exception cref="InvalidOperationException">Thrown if <see cref="IsCompletable"/> is <see langword="false"/> when called.</exception>
 		public void Export( RenderTargetBitmap? bitmap = null )
-{
-Debug.WriteLine( $"Model: Exporting graph info..." );
-if ( !this.IsCompletable )
-{
-throw new InvalidOperationException( "Done was executed when IsCompletable was false." );
-}
-string directory = Path.GetDirectoryName( this.ImageFilePath!.LocalPath ) ?? "";
+		{
+			Debug.WriteLine( $"Model: Exporting graph info..." );
+			if ( !this.IsCompletable )
+			{
+				throw new InvalidOperationException( "Done was executed when IsCompletable was false." );
+			}
+
+			string directory = Path.GetDirectoryName( this.ImageFilePath!.LocalPath ) ?? "";
 			string filename = Path.GetFileNameWithoutExtension( this.ImageFilePath!.LocalPath );
 			string extension = Path.GetExtension( this.ImageFilePath!.LocalPath );
 
@@ -280,10 +281,10 @@ string directory = Path.GetDirectoryName( this.ImageFilePath!.LocalPath ) ?? "";
 
 			if ( writeHeader )
 			{
-				writer.WriteLine( "Image,NumNodes,NumEdges,Width,Depth,HSS,NumMainIdeas,MaxNumDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
+				writer.WriteLine( "Image,NumNodes,NumEdges,Width,Depth,HSS,NumMainIdeas,MaxNumDetails,NumCrosslinks,MaxCrosslinkDist,PriorKnowledge,Questions" );
 			}
 
-			string info = $"{filename}.{extension},{this.NumNodes},{this.Width},{this.Depth},{this.Hss},{this.NumMainIdeas},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
+			string info = $"\"{filename}.{extension}\",{this.NumNodes},{this.NumEdges},{this.Width},{this.Depth},{this.Hss},{this.NumMainIdeas},{this.MaxNumDetails},{this.NumCrosslinks},{this.MaxCrosslinkDist},{this.PriorKnowledge},{this.Questions}";
 			Debug.WriteLine( $"Model: {info}" );
 			writer.WriteLine( info );
 
