@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Media.Imaging;
 
 namespace ConceptMapper
 {
@@ -30,19 +31,7 @@ namespace ConceptMapper
 		public Uri? ImageFilePath { get; set; }
 		public Uri? OutputFilePath { get; set; }
 
-		public bool IsCompletable
-		{
-			get
-			{
-				return this.Root is not null
-					&& this.ImageFilePath is not null
-					&& this.OutputFilePath is not null
-					&& this.PriorKnowledge is not null
-					&& this.Questions is not null
-					&& this.NumCrosslinks is not null
-					&& this.MaxCrosslinkDist is not null;
-			}
-		}
+		public bool IsCompletable => this.Root is not null && this.ImageFilePath is not null && this.OutputFilePath is not null;
 
 		public void AddNode( MapNode node )
 		{
@@ -91,10 +80,10 @@ namespace ConceptMapper
 			this.Depth = 0;
 			this.MaxNumDetails = 0;
 
-			this.PriorKnowledge = null;
-			this.Questions = null;
-			this.NumCrosslinks = null;
-			this.MaxCrosslinkDist = null;
+			this.PriorKnowledge = 0;
+			this.Questions = 0;
+			this.NumCrosslinks = 0;
+			this.MaxCrosslinkDist = 0;
 		}
 
 		public void DeleteCurrentNode( )
@@ -120,12 +109,16 @@ namespace ConceptMapper
 			}
 		}
 
-		public void Export( )
+		public void Export( RenderTargetBitmap? bitmap = null )
 		{
 			if ( !this.IsCompletable )
 			{
 				throw new InvalidOperationException( "Done was executed when IsCompletable was false." );
 			}
+
+			string directory = Path.GetDirectoryName( this.ImageFilePath!.LocalPath ) ?? "";
+			string filename = Path.GetFileNameWithoutExtension( this.ImageFilePath!.LocalPath );
+			string extension = Path.GetExtension( this.ImageFilePath!.LocalPath );
 
 			bool writeHeader = !File.Exists( this.OutputFilePath!.LocalPath );
 			using StreamWriter writer = new( this.OutputFilePath!.LocalPath , true );
@@ -135,9 +128,21 @@ namespace ConceptMapper
 				writer.WriteLine( "Image,NumNodes,Width,Depth,HSS,NumMainIdeas,MaxNumOfDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
 			}
 
-			string info = $"{Path.GetFileName( this.ImageFilePath!.LocalPath )},{this.NumNodes},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
+			string info = $"{filename}.{extension},{this.NumNodes},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
 			Debug.WriteLine( $"Model: {info}" );
 			writer.WriteLine( info );
+
+			if ( bitmap is not null )
+			{
+				string subdirName = "ConceptMapperScreenshots";
+				_ = Directory.CreateDirectory( Path.Combine( directory , subdirName ) );
+				using var fs = new FileStream( Path.Combine( directory , subdirName , filename + "_nodes" + extension ) , FileMode.Create , FileAccess.Write );
+
+				var encoder = new PngBitmapEncoder( );
+				encoder.Frames.Add( BitmapFrame.Create( bitmap ) );
+
+				encoder.Save( fs );
+			}
 		}
 
 		private void CalculateWidthAndDepth( )

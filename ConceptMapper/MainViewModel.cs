@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -100,11 +99,7 @@ namespace ConceptMapper
 			this.IsCompletable ? "Good to go! :)" : ("Can not complete because:" +
 			(this.model.Root is null ? "\n - No nodes have been placed." : "") +
 			(this.model.ImageFilePath is null ? "\n - No image file has been selected." : "") +
-			(this.model.OutputFilePath is null ? "\n - No output file has been selected." : "") +
-			(this.model.PriorKnowledge is null ? "\n - Field 'Prior Knowledge' is empty." : "") +
-			(this.model.Questions is null ? "\n - Field 'Questions' is empty." : "") +
-			(this.model.NumCrosslinks is null ? "\n - Field '# Crosslinks' is empty." : "") +
-			(this.model.MaxCrosslinkDist is null ? "\n - Field 'Max Crosslink dist.' is empty." : ""));
+			(this.model.OutputFilePath is null ? "\n - No output file has been selected." : ""));
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -162,9 +157,9 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
-		public void Done( )
+		public void Done( RenderTargetBitmap? bitmap = null )
 		{
-			this.model.Export( );
+			this.model.Export( bitmap );
 
 			Uri? nextImage = null;
 			if ( this.AutoNextImage && this.ImageFolder is not null )
@@ -177,13 +172,12 @@ namespace ConceptMapper
 
 				if ( i + 1 < images.Length )
 					nextImage = new Uri( images[i + 1] );
+
+				if ( nextImage is null )
+					_ = System.Windows.MessageBox.Show( $"All images in '{this.ImageFolder}' have been processed." );
 			}
 			this.model.ImageFilePath = nextImage;
 
-			this.PriorKnowledge = null;
-			this.Questions = null;
-			this.NumCrosslinks = null;
-			this.MaxCrosslinkDist = null;
 			this.ResetGraph( );
 		}
 

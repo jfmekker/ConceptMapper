@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace ConceptMapper
 {
@@ -17,6 +19,7 @@ namespace ConceptMapper
 			this.InitializeComponent( );
 			this.viewModel = new MainViewModel( this.Canvas );
 			this.DataContext = this.viewModel;
+			this.viewModel.ResetGraph( );
 		}
 
 		private void Canvas_MouseLeftButtonUp( object sender , MouseButtonEventArgs e )
@@ -42,6 +45,7 @@ namespace ConceptMapper
 		{
 			SaveFileDialog dialog = new( );
 			dialog.Filter = "Comma-Separated Value files (*csv)|*.csv";
+			dialog.FileName = "output.csv";
 			dialog.AddExtension = true;
 			dialog.OverwritePrompt = false;
 			if ( dialog.ShowDialog( ) is true )
@@ -52,7 +56,7 @@ namespace ConceptMapper
 
 		private void Menu_About( object sender , RoutedEventArgs e ) => new AboutWindow( ).ShowDialog( );
 
-		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done( );
+		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done( this.GetImage( ) );
 
 		private void Window_KeyDown( object sender , KeyEventArgs e )
 		{
@@ -61,6 +65,25 @@ namespace ConceptMapper
 			{
 				this.viewModel.DeleteCurrent( );
 			}
+		}
+
+		private RenderTargetBitmap? GetImage( )
+		{
+			var size = new Size( this.ActualWidth , this.ActualHeight );
+			if ( size.IsEmpty )
+				return null;
+
+			var result = new RenderTargetBitmap( (int)size.Width , (int)size.Height , 96 , 96 , PixelFormats.Pbgra32 );
+			var drawingvisual = new DrawingVisual( );
+
+			using ( DrawingContext context = drawingvisual.RenderOpen( ) )
+			{
+				context.DrawRectangle( new VisualBrush( this ) , null , new Rect( new Point( ) , size ) );
+				context.Close( );
+			}
+
+			result.Render( drawingvisual );
+			return result;
 		}
 	}
 }
