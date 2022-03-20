@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace ConceptMapper
 {
@@ -17,6 +18,9 @@ namespace ConceptMapper
 		public int Depth { get; private set; }
 		public int Hss => this.Width + this.Depth;
 		public int MaxNumDetails { get; private set; }
+
+		public int NumNodes => this.AllNodes.Count;
+		public int NumEdges => this.AllNodes.Sum( x => x.Neighbors.Count ) / 2;
 
 		public int? PriorKnowledge { get; set; }
 		public int? Questions { get; set; }
@@ -128,10 +132,10 @@ namespace ConceptMapper
 
 			if ( writeHeader )
 			{
-				writer.WriteLine( "Image,Width,Depth,HSS,NumMainIdeas,MaxNumOfDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
+				writer.WriteLine( "Image,NumNodes,Width,Depth,HSS,NumMainIdeas,MaxNumOfDetails,PriorKnowledge,Questions,NumCrosslinks,MaxCrosslinkDistance" );
 			}
 
-			string info = $"{Path.GetFileName( this.ImageFilePath!.LocalPath )},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
+			string info = $"{Path.GetFileName( this.ImageFilePath!.LocalPath )},{this.NumNodes},{this.Width},{this.Depth},{this.Hss},{this.MainIdeas.Count},{this.MaxNumDetails},{this.PriorKnowledge},{this.Questions},{this.NumCrosslinks},{this.MaxCrosslinkDist}";
 			Debug.WriteLine( $"Model: {info}" );
 			writer.WriteLine( info );
 		}

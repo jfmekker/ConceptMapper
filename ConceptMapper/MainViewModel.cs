@@ -4,8 +4,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
@@ -24,10 +24,37 @@ namespace ConceptMapper
 		{
 			this.canvas = canvas;
 			this.model = new( );
+
+			int nodeSizeIncrement = 15;
+			this.NodeIncreaseSizeCommand = new RelayCommand(
+				( ) => MapNode.Radius <= MapNode.MaxRadius - nodeSizeIncrement ,
+				( ) => {
+					MapNode.Radius += nodeSizeIncrement;
+					this.Update( );
+				}
+			);
+			this.NodeDecreaseSizeCommand = new RelayCommand(
+				( ) => MapNode.Radius >= MapNode.MinRadius + nodeSizeIncrement ,
+				( ) => {
+					MapNode.Radius -= nodeSizeIncrement;
+					this.Update( );
+				}
+			);
+			this.NodeResetSizeCommand = new RelayCommand(
+				( ) => MapNode.Radius != MapNode.DefaultRadius ,
+				( ) => {
+					MapNode.Radius = MapNode.DefaultRadius;
+					this.Update( );
+				}
+			);
 		}
 
 		public string? ImageFolder { get; set; }
 		public bool AutoNextImage { get; set; } = true;
+
+		public RelayCommand NodeIncreaseSizeCommand { get; }
+		public RelayCommand NodeDecreaseSizeCommand { get; }
+		public RelayCommand NodeResetSizeCommand { get; }
 
 		public string ImageFile
 		{
@@ -50,8 +77,8 @@ namespace ConceptMapper
 			}
 		}
 
-		public int NumNodes => this.model.AllNodes.Count;
-		public int NumEdges => this.model.AllNodes.Sum( x => x.Neighbors.Count ) / 2;
+		public int NumNodes => this.model.NumNodes;
+		public int NumEdges => this.model.NumEdges;
 
 		public int Depth => this.model.Depth;
 		public int Width => this.model.Width;
@@ -89,7 +116,7 @@ namespace ConceptMapper
 			MapNode? selected = null;
 			foreach ( MapNode node in graph )
 			{
-				if ( node.DistanceTo( point ) <= MapNode.RADIUS )
+				if ( node.DistanceTo( point ) <= MapNode.Radius )
 				{
 					selected = node;
 					break;
@@ -190,6 +217,10 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.IsCompletable ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
 			}
+
+			this.NodeIncreaseSizeCommand.OnCanExecuteChanged( );
+			this.NodeDecreaseSizeCommand.OnCanExecuteChanged( );
+			this.NodeResetSizeCommand.OnCanExecuteChanged( );
 		}
 
 		private void DrawNodesAndEdges( )

@@ -13,6 +13,7 @@
 		<RepositoryUrl>https://github.com/jfmekker/ConceptMapper</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<StartupObject>ConceptMapper.App</StartupObject>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

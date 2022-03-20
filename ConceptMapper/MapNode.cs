@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -11,7 +10,11 @@ namespace ConceptMapper
 	{
 		private static int nextId;
 
-		public const int RADIUS = 40;
+		public const int DefaultRadius = 25;
+		public const int MinRadius = 10;
+		public const int MaxRadius = 55;
+
+		public static int Radius { get; set; } = DefaultRadius;
 
 		public MapNode( Point point )
 		{
@@ -73,25 +76,31 @@ namespace ConceptMapper
 
 		public Shape AsShape( )
 		{
-			return new Ellipse( )
-			{
-				Width = RADIUS * 2 ,
-				Height = RADIUS * 2 ,
+			if ( Radius is < 10 or > 100 )
+				throw new InvalidOperationException( $"Node radius out of bounds: {Radius}" );
+
+			var e = new Ellipse( ) {
+				Width = Radius * 2 ,
+				Height = Radius * 2 ,
 				Opacity = 0.5 ,
 				StrokeThickness = 2 ,
 				Stroke = Brushes.Red ,
-				RenderTransform = new TranslateTransform( this.X - RADIUS , this.Y - RADIUS ) ,
+				RenderTransform = new TranslateTransform( this.X - Radius , this.Y - Radius ) ,
 			};
+
+			return e;
 		}
 
 		public Line MakeLineTo( MapNode that )
 		{
-			double theta = Math.Atan2( that.Y - this.Y , that.X - this.X );
-			double dx = RADIUS * Math.Cos( theta );
-			double dy = RADIUS * Math.Sin( theta );
+			if ( Radius is < 10 or > 100 )
+				throw new InvalidOperationException( $"Node radius out of bounds: {Radius}" );
 
-			return new Line( )
-			{
+			double theta = Math.Atan2( that.Y - this.Y , that.X - this.X );
+			double dx = Radius * Math.Cos( theta );
+			double dy = Radius * Math.Sin( theta );
+
+			var l = new Line( ) {
 				X1 = this.X + dx ,
 				Y1 = this.Y + dy ,
 				X2 = that.X - dx ,
@@ -100,6 +109,8 @@ namespace ConceptMapper
 				StrokeThickness = 2 ,
 				Stroke = Brushes.Red ,
 			};
+
+			return l;
 		}
 	}
 }
