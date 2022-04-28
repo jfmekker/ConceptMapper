@@ -276,15 +276,34 @@ namespace ConceptMapper
 			string filename = Path.GetFileNameWithoutExtension( this.ImageFilePath!.LocalPath );
 			string extension = Path.GetExtension( this.ImageFilePath!.LocalPath );
 
-			bool writeHeader = !File.Exists( this.OutputFilePath!.LocalPath );
+			bool fileExists = File.Exists( this.OutputFilePath!.LocalPath );
+
+			// Check if we need to tack on a new line to an existing file
+			// Need to do this before opening a writer
+			bool writeNewLine = false;
+			if ( fileExists )
+			{
+				using TextReader reader = new StreamReader( this.OutputFilePath!.LocalPath );
+				writeNewLine = !reader.ReadToEnd( ).EndsWith( Environment.NewLine );
+				reader.Close( );
+			}
+
 			using StreamWriter writer = new( this.OutputFilePath!.LocalPath , true );
 
-			if ( writeHeader )
+			// Write the column headers or a new line
+			if ( !fileExists )
 			{
 				writer.WriteLine( "Image,NumNodes,NumEdges,Width,Depth,HSS,NumMainIdeas,MaxNumDetails,NumCrosslinks,MaxCrosslinkDist,PriorKnowledge,Questions" );
 			}
+			else if ( writeNewLine )
+			{
+				writer.WriteLine( );
+			}
 
-			string info = $"\"{filename}.{extension}\",{this.NumNodes},{this.NumEdges},{this.Width},{this.Depth},{this.Hss},{this.NumMainIdeas},{this.MaxNumDetails},{this.NumCrosslinks},{this.MaxCrosslinkDist},{this.PriorKnowledge},{this.Questions}";
+			// If the file name includes a comma, then use quotation marks
+			string quotemark = filename.Contains( ',' ) ? "\"" : "";
+			string info = $"{quotemark}{filename}{extension}{quotemark},{this.NumNodes},{this.NumEdges},{this.Width},{this.Depth},{this.Hss},{this.NumMainIdeas},{this.MaxNumDetails},{this.NumCrosslinks},{this.MaxCrosslinkDist},{this.PriorKnowledge},{this.Questions}";
+
 			Debug.WriteLine( $"Model: {info}" );
 			writer.WriteLine( info );
 
