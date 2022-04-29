@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -54,7 +53,7 @@ namespace ConceptMapper
 		}
 
 		/// <summary>
-		/// Folder containg the selected image file.
+		/// Folder to select image files from.
 		/// </summary>
 		public string? ImageFolder { get; set; }
 
@@ -93,6 +92,7 @@ namespace ConceptMapper
 				this.model.ImageFilePath = uri;
 				this.ImageFolder = Path.GetDirectoryName( uri.LocalPath );
 				this.Update( );
+				this.CheckForExistingRow( );
 			}
 		}
 
@@ -108,6 +108,7 @@ namespace ConceptMapper
 			{
 				this.model.OutputFilePath = new Uri( value );
 				this.Update( );
+				this.CheckForExistingRow( );
 			}
 		}
 
@@ -163,6 +164,11 @@ namespace ConceptMapper
 		public bool IsCompletable => this.model.IsCompletable;
 
 		/// <summary>
+		/// Shows whether the image folder is set and a next image can be found.
+		/// </summary>
+		public bool NextImageFindable => this.ImageFolder is not null;
+
+		/// <summary>
 		/// Tooltip string to attach to the "Done" button. Tells
 		/// the user what actions (if any) need to be taken.
 		/// </summary>
@@ -173,7 +179,7 @@ namespace ConceptMapper
 			(this.model.OutputFilePath is null ? "\n - No output file has been selected." : ""));
 
 		/// <summary>
-		/// Event to raise when a propety changes.
+		/// Event to raise when a property changes.
 		/// </summary>
 		public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -254,24 +260,12 @@ namespace ConceptMapper
 		{
 			this.model.Export( bitmap );
 
-			Uri? nextImage = null;
-			if ( this.AutoNextImage && this.ImageFolder is not null )
-			{
-				int i = 0;
-				string[] images = Directory.GetFiles( this.ImageFolder );
-
-				while ( i < images.Length && this.ImageFile != images[i] )
-					i += 1;
-
-				if ( i + 1 < images.Length )
-					nextImage = new Uri( images[i + 1] );
-
-				if ( nextImage is null )
-					_ = System.Windows.MessageBox.Show( $"All images in '{this.ImageFolder}' have been processed." );
-			}
-			this.model.ImageFilePath = nextImage;
-
 			this.ResetGraph( );
+
+			if ( this.AutoNextImage )
+			{
+				this.NextImage( );
+			}
 		}
 
 		/// <inheritdoc cref="MainModel.DeleteCurrentNode"/>
@@ -281,13 +275,47 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
+		/// <summary>
+		/// Set the selected image file to the next one in the image folder
+		/// that does not have a row in the output file.
+		/// </summary>
+		public void NextImage( )
+		{
+			if ( this.ImageFolder is not null && this.model.OutputFilePath is not null )
+			{
+				if ( this.model.FindNextUnprocessedImageFile( this.ImageFolder ) is string nextImageName )
+				{
+					this.ImageFile = nextImageName;
+				}
+				else
+				{
+					this.model.ImageFilePath = null;
+					_ = System.Windows.MessageBox.Show( $"All images in '{this.ImageFolder}' have been processed." ,
+														"" ,
+														System.Windows.MessageBoxButton.OK ,
+														System.Windows.MessageBoxImage.Information );
+				}
+			}
+
+			this.Update( );
+		}
+
+		/// <summary>
+		/// Set the image to nothing.
+		/// </summary>
+		public void UnsetImage( )
+		{
+			this.model.ImageFilePath = null;
+			this.Update( );
+		}
+
 		private void Update( )
 		{
 			this.DrawNodesAndEdges( );
 
 			if ( this.PropertyChanged is not null )
 			{
-				// I know it's not the best practice to update everything everytime... but who cares
+				// I know it's not the best practice to update everything every time... but who cares
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumNodes ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NumEdges ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.Width ) ) );
@@ -304,6 +332,7 @@ namespace ConceptMapper
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.OutputFile ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.IsCompletable ) ) );
 				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.CompletableTooltip ) ) );
+				this.PropertyChanged( this , new PropertyChangedEventArgs( nameof( this.NextImageFindable ) ) );
 			}
 
 			this.NodeIncreaseSizeCommand.OnCanExecuteChanged( );
@@ -349,6 +378,17 @@ namespace ConceptMapper
 			{
 				Line linkLine = node1.MakeLineTo( node2 ).AsCrosslink( );
 				_ = this.canvas.Children.Add( linkLine );
+			}
+		}
+
+		private void CheckForExistingRow( )
+		{
+			if ( this.model.ImageFileHasOuputFileRow( ) )
+			{
+				_ = System.Windows.MessageBox.Show( "The selected image already has a row in the selected output file." ,
+													"Warning!" ,
+													System.Windows.MessageBoxButton.OK ,
+													System.Windows.MessageBoxImage.Warning );
 			}
 		}
 	}

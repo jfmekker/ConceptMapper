@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using System;
 
 namespace ConceptMapper
 {
@@ -61,6 +62,41 @@ namespace ConceptMapper
 		}
 
 		/// <summary>
+		/// Create a dialog box to select an existing image file.
+		/// </summary>
+		private void Menu_SelectImageFolder( object sender , RoutedEventArgs e )
+		{
+			OpenFileDialog dialog = new( );
+			dialog.CheckFileExists = false;
+			dialog.CheckPathExists = false;
+			dialog.Filter = "folder|*...";
+			dialog.FileName = "this";
+			dialog.AddExtension = false;
+			if ( dialog.ShowDialog( ) is true )
+			{
+				Debug.WriteLine( $"View: Folder selected - '{dialog.FileName}'" );
+				this.viewModel.ImageFolder = System.IO.Path.GetDirectoryName( dialog.FileName );
+
+				if ( this.viewModel.AutoNextImage )
+				{
+					this.viewModel.NextImage( );
+				}
+				else
+				{
+					this.viewModel.UnsetImage( );
+				}
+			}
+		}
+
+		/// <summary>
+		/// Automatically select the next unprocessed image file in the folder.
+		/// </summary>
+		private void Menu_SelectNextImageFile( object sender , RoutedEventArgs e )
+		{
+			this.viewModel.NextImage( );
+		}
+
+		/// <summary>
 		/// Create a dialog box to select or create a output CSV file.
 		/// </summary>
 		private void Menu_SelectOutputFile( object sender , RoutedEventArgs e )
@@ -82,7 +118,21 @@ namespace ConceptMapper
 		private void Menu_About( object sender , RoutedEventArgs e ) => new AboutWindow( ).ShowDialog( );
 
 		/// <inheritdoc cref="MainViewModel.Done"/>
-		private void Button_DoneClick( object sender , RoutedEventArgs e ) => this.viewModel.Done( this.GetImage( ) );
+		private void Button_DoneClick( object sender , RoutedEventArgs e )
+		{
+			try
+			{
+				this.viewModel.Done( this.GetImage( ) );
+				throw new InvalidOperationException( "Some random thing." );
+			}
+			catch ( Exception ex )
+			{
+				_ = MessageBox.Show( $"An unexpected exception has occurred. Please check that the output file has successfully saved with the data from this image, then report this issue on Github.\nhttps://github.com/jfmekker/ConceptMapper/issues\n\nException message:\n{ex.Message}" ,
+									 "Error!" ,
+									 MessageBoxButton.OK ,
+									 MessageBoxImage.Error );
+			}
+		}
 
 		/// <summary>
 		/// Handle a key press when the window has focus.
