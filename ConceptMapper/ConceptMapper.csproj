@@ -8,12 +8,19 @@
 		<NoWin32Manifest>true</NoWin32Manifest>
 		<Authors>Jacob Mekker</Authors>
 		<Copyright>2022</Copyright>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl></PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/jfmekker/ConceptMapper</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/jfmekker/ConceptMapper</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
 		<StartupObject>ConceptMapper.App</StartupObject>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<SignAssembly>False</SignAssembly>
+		<PackageIcon>ConceptMapper.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<AssemblyVersion>1.2.0</AssemblyVersion>
+		<PackageLicenseFile>C:\Users\Jacob\source\repos\ConceptMapper\LICENSE</PackageLicenseFile>
+		<ApplicationIcon>ConceptMapper.ico</ApplicationIcon>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -33,6 +40,10 @@
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
