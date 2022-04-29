@@ -290,7 +290,10 @@ namespace ConceptMapper
 				else
 				{
 					this.model.ImageFilePath = null;
-					_ = System.Windows.MessageBox.Show( $"All images in '{this.ImageFolder}' have been processed." );
+					_ = System.Windows.MessageBox.Show( $"All images in '{this.ImageFolder}' have been processed." ,
+														"" ,
+														System.Windows.MessageBoxButton.OK ,
+														System.Windows.MessageBoxImage.Information );
 				}
 			}
 
@@ -382,7 +385,10 @@ namespace ConceptMapper
 		{
 			if ( this.model.ImageFileHasOuputFileRow( ) )
 			{
-				_ = System.Windows.MessageBox.Show( "The selected image already has a row in the selected output file." , "Warning!" );
+				_ = System.Windows.MessageBox.Show( "The selected image already has a row in the selected output file." ,
+													"Warning!" ,
+													System.Windows.MessageBoxButton.OK ,
+													System.Windows.MessageBoxImage.Warning );
 			}
 		}
 	}
