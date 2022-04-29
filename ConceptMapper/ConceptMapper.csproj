@@ -20,7 +20,6 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<AssemblyVersion>1.2.0</AssemblyVersion>
 		<PackageLicenseFile>C:\Users\Jacob\source\repos\ConceptMapper\LICENSE</PackageLicenseFile>
-		<ApplicationIcon>ConceptMapper.ico</ApplicationIcon>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
