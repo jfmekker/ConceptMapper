@@ -61,6 +61,42 @@ namespace ConceptMapper
 		}
 
 		/// <summary>
+		/// Create a dialog box to select an existing image file.
+		/// </summary>
+		private void Menu_SelectImageFolder( object sender , RoutedEventArgs e )
+		{
+
+			OpenFileDialog dialog = new( );
+			dialog.CheckFileExists = false;
+			dialog.CheckPathExists = false;
+			dialog.Filter = "folder|*...";
+			dialog.FileName = "this";
+			dialog.AddExtension = false;
+			if ( dialog.ShowDialog( ) is true )
+			{
+				Debug.WriteLine( $"View: Folder selected - '{dialog.FileName}'" );
+				this.viewModel.ImageFolder = System.IO.Path.GetDirectoryName( dialog.FileName );
+
+				if ( this.viewModel.AutoNextImage )
+				{
+					this.viewModel.NextImage( );
+				}
+				else
+				{
+					this.viewModel.UnsetImage( );
+				}
+			}
+		}
+
+		/// <summary>
+		/// Automatically select the next unprocessed image file in the folder.
+		/// </summary>
+		private void Menu_SelectNextImageFile( object sender , RoutedEventArgs e )
+		{
+			this.viewModel.NextImage( );
+		}
+
+		/// <summary>
 		/// Create a dialog box to select or create a output CSV file.
 		/// </summary>
 		private void Menu_SelectOutputFile( object sender , RoutedEventArgs e )

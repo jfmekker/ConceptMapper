@@ -12,7 +12,9 @@
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="File">
 				<MenuItem Header="Select map image..." Click="Menu_SelectImageFile"/>
-				<MenuItem IsCheckable="True" IsChecked="{Binding AutoNextImage}" Header="Auto select next image in folder"/>
+                <MenuItem Header="Select map image folder..." Click="Menu_SelectImageFolder"/>
+                <MenuItem Header="Select next unprocessed image..." IsEnabled="{Binding NextImageFindable}" Click="Menu_SelectNextImageFile"/>
+                <MenuItem IsCheckable="True" IsChecked="{Binding AutoNextImage}" Header="Auto select next image in folder"/>
 				<MenuItem Header="Select output file..." Click="Menu_SelectOutputFile"/>
 				<MenuItem Header="Delete all nodes" Click="Menu_ResetGraph"/>
 			</MenuItem>

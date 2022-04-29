@@ -100,7 +100,7 @@ namespace ConceptMapper
 		public Uri? ImageFilePath { get; set; }
 
 		/// <summary>
-		/// Path to the output csv file.
+		/// Path to the output CSV file.
 		/// </summary>
 		public Uri? OutputFilePath { get; set; }
 
@@ -259,8 +259,8 @@ namespace ConceptMapper
 		}
 
 		/// <summary>
-		/// Export the the graph information to the output CSV file. If the output file does not exist,
-		/// a header row is added first. Potentially saves a screenshot under a "ConceptMapper" folder.
+		/// Export the graph information to the output CSV file. If the output file does not exist,
+		/// a header row is added first. Saves a screenshot under a "ConceptMapper" folder if given one.
 		/// </summary>
 		/// <param name="bitmap">Screenshot to save with "_nodes" as an added suffix to the filename.</param>
 		/// <exception cref="InvalidOperationException">Thrown if <see cref="IsCompletable"/> is <see langword="false"/> when called.</exception>
@@ -273,7 +273,7 @@ namespace ConceptMapper
 			}
 
 			string directory = Path.GetDirectoryName( this.ImageFilePath!.LocalPath ) ?? "";
-			string filename = Path.GetFileNameWithoutExtension( this.ImageFilePath!.LocalPath );
+			string imageName = Path.GetFileNameWithoutExtension( this.ImageFilePath!.LocalPath );
 			string extension = Path.GetExtension( this.ImageFilePath!.LocalPath );
 
 			bool fileExists = File.Exists( this.OutputFilePath!.LocalPath );
@@ -290,7 +290,7 @@ namespace ConceptMapper
 
 			using StreamWriter writer = new( this.OutputFilePath!.LocalPath , true );
 
-			// Write the column headers or a new line
+			// Write the column headers or a new line if needed
 			if ( !fileExists )
 			{
 				writer.WriteLine( "Image,NumNodes,NumEdges,Width,Depth,HSS,NumMainIdeas,MaxNumDetails,NumCrosslinks,MaxCrosslinkDist,PriorKnowledge,Questions" );
@@ -300,9 +300,9 @@ namespace ConceptMapper
 				writer.WriteLine( );
 			}
 
-			// If the file name includes a comma, then use quotation marks
-			string quotemark = filename.Contains( ',' ) ? "\"" : "";
-			string info = $"{quotemark}{filename}{extension}{quotemark},{this.NumNodes},{this.NumEdges},{this.Width},{this.Depth},{this.Hss},{this.NumMainIdeas},{this.MaxNumDetails},{this.NumCrosslinks},{this.MaxCrosslinkDist},{this.PriorKnowledge},{this.Questions}";
+			// If the image name includes a comma, then use quotation marks
+			string quotemark = imageName.Contains( ',' ) ? "\"" : "";
+			string info = $"{quotemark}{imageName}{extension}{quotemark},{this.NumNodes},{this.NumEdges},{this.Width},{this.Depth},{this.Hss},{this.NumMainIdeas},{this.MaxNumDetails},{this.NumCrosslinks},{this.MaxCrosslinkDist},{this.PriorKnowledge},{this.Questions}";
 
 			Debug.WriteLine( $"Model: {info}" );
 			writer.WriteLine( info );
@@ -311,13 +311,103 @@ namespace ConceptMapper
 			{
 				string subdirName = "ConceptMapperScreenshots";
 				_ = Directory.CreateDirectory( Path.Combine( directory , subdirName ) );
-				using var fs = new FileStream( Path.Combine( directory , subdirName , filename + "_nodes" + extension ) , FileMode.Create , FileAccess.Write );
+				using var fs = new FileStream( Path.Combine( directory , subdirName , imageName + "_nodes" + extension ) , FileMode.Create , FileAccess.Write );
 
 				var encoder = new PngBitmapEncoder( );
 				encoder.Frames.Add( BitmapFrame.Create( bitmap ) );
 
 				encoder.Save( fs );
 			}
+		}
+
+		/// <summary>
+		/// Check if the current image file has a row in the current output file.
+		/// </summary>
+		/// <returns>True if the current image file has already been processed.</returns>
+		public bool ImageFileHasOuputFileRow( )
+		{
+			if ( this.ImageFilePath is null || this.OutputFilePath is null )
+			{
+				return false;
+			}
+
+			using TextReader reader = new StreamReader( this.OutputFilePath.LocalPath );
+			string imageName = Path.GetFileName( this.ImageFilePath.LocalPath );
+
+			// Check first column of every row
+			while ( reader.ReadLine( ) is string line )
+			{
+				if ( line.Length > 0 )
+				{
+					// Get the image name minus any quotes
+					bool quoted = line[0] == '"';
+					int startIndex = quoted ? 1 : 0;
+					int endIndex = quoted ? line[1..].IndexOf( '"' ) + 1 : line.IndexOf( ',' );
+
+					if ( imageName.Equals( line[startIndex..endIndex] ) )
+					{
+						Debug.WriteLine( $"Model: Image '{line[startIndex..endIndex]}' already processed." );
+						return true;
+					}
+				}
+			}
+
+			Debug.WriteLine( $"Model: Image '{imageName}' not processed." );
+			return false;
+		}
+
+		public string? FindNextUnprocessedImageFile( string folder )
+		{
+			string? next = null;
+
+			if ( this.OutputFilePath is null )
+				throw new InvalidOperationException( "Output file must be set to find next image." );
+			else if ( !File.Exists( this.OutputFilePath.LocalPath ) )
+				return next;
+
+			using TextReader reader = new StreamReader( this.OutputFilePath.LocalPath );
+			_ = reader.ReadLine( ); // skip header
+
+			// Get image names from first column of every row
+			List<string> filesProcessed = new( );
+			while ( reader.ReadLine( ) is string line )
+			{
+				if ( line.Length > 0 )
+				{
+					// Get the image name minus any quotes
+					bool quoted = line[0] == '"';
+					int startIndex = quoted ? 1 : 0;
+					int endIndex = quoted ? line[1..].IndexOf( '"' ) + 1 : line.IndexOf( ',' );
+
+					filesProcessed.Add( line[startIndex..endIndex] );
+				}
+			}
+
+			foreach ( string f in filesProcessed )
+				Debug.WriteLine( $"Model: File processed - '{f}'" );
+
+			// Check through files in folder
+			string[] filesInFolder = Directory.GetFiles( folder );
+			Array.Sort( filesInFolder , StringComparer.CurrentCulture ); // ensure alphabetical order
+			foreach ( string file in filesInFolder )
+			{
+				if ( !Path.GetExtension( file ).Equals( ".png" , StringComparison.OrdinalIgnoreCase ) )
+				{
+					Debug.WriteLine( $"Model: File '{file}' has wrong extension." );
+				}
+				else if ( filesProcessed.Contains( Path.GetFileName( file ) ) )
+				{
+					Debug.WriteLine( $"Model: Image '{file}' already processed." );
+				}
+				else
+				{
+					Debug.WriteLine( $"Model: Selecting image '{file}' to process." );
+					next = file;
+					break;
+				}
+			}
+
+			return next;
 		}
 
 		/// <summary>
