@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -276,6 +275,10 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
+		/// <summary>
+		/// Set the selected image file to the next one in the image folder
+		/// that does not have a row in the output file.
+		/// </summary>
 		public void NextImage( )
 		{
 			if ( this.ImageFolder is not null && this.model.OutputFilePath is not null )
@@ -294,6 +297,9 @@ namespace ConceptMapper
 			this.Update( );
 		}
 
+		/// <summary>
+		/// Set the image to nothing.
+		/// </summary>
 		public void UnsetImage( )
 		{
 			this.model.ImageFilePath = null;

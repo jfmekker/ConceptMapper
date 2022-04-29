@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
 using System.Windows.Media.Imaging;
 
 namespace ConceptMapper
@@ -355,7 +353,13 @@ namespace ConceptMapper
 			Debug.WriteLine( $"Model: Image '{imageName}' not processed." );
 			return false;
 		}
-
+		
+		/// <summary>
+		/// Find an image file in the provided folder that is not in the <see cref="OutputFilePath"/>.
+		/// </summary>
+		/// <param name="folder">Path to the folder to search in.</param>
+		/// <returns>The path to an unprocessed image if found, or <see langword="null"/>.</returns>
+		/// <exception cref="InvalidOperationException">Thrown if <see cref="OutputFilePath"/> is <see langword="null"/>.</exception>
 		public string? FindNextUnprocessedImageFile( string folder )
 		{
 			string? next = null;

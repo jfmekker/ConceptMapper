@@ -65,7 +65,6 @@ namespace ConceptMapper
 		/// </summary>
 		private void Menu_SelectImageFolder( object sender , RoutedEventArgs e )
 		{
-
 			OpenFileDialog dialog = new( );
 			dialog.CheckFileExists = false;
 			dialog.CheckPathExists = false;
