@@ -19,14 +19,15 @@
 				<MenuItem Header="Delete all nodes" Click="Menu_ResetGraph"/>
 			</MenuItem>
 			<MenuItem Header="View">
-				<MenuItem IsCheckable="True" IsChecked="{Binding ShowCurrent}" Header="Highlight (green outline) current node"/>
+				<MenuItem IsCheckable="True" IsChecked="{Binding ShowCurrent}" Header="Highlight (black outline) current node"/>
 				<MenuItem IsCheckable="True" IsChecked="{Binding ShowRoot}" Header="Highlight (yellow fill) root node"/>
 				<MenuItem IsCheckable="True" IsChecked="{Binding ShowMainIdeas}" Header="Highlight (orange fill) main ideas"/>
 				<MenuItem Header="Increase node size" Command="{Binding NodeIncreaseSizeCommand}"/>
 				<MenuItem Header="Decrease node size" Command="{Binding NodeDecreaseSizeCommand}"/>
 				<MenuItem Header="Reset node size" Command="{Binding NodeResetSizeCommand}"/>
 			</MenuItem>
-			<MenuItem Header="About / Instructions" Click="Menu_About"/>
+			<MenuItem Header="About" Click="Menu_About"/>
+            <MenuItem Header="Instructions" Click="Menu_Instructions"/>
 		</Menu>
 		<GroupBox DockPanel.Dock="Right" Header="Calculations">
 			<Grid>
