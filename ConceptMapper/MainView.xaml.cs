@@ -117,13 +117,17 @@ namespace ConceptMapper
 		/// </summary>
 		private void Menu_About( object sender , RoutedEventArgs e ) => new AboutWindow( ).ShowDialog( );
 
+		/// <summary>
+		/// Create and show the <see cref="AboutWindow"/>.
+		/// </summary>
+		private void Menu_Instructions( object sender , RoutedEventArgs e ) => new InstructionsWindow( ).ShowDialog( );
+
 		/// <inheritdoc cref="MainViewModel.Done"/>
 		private void Button_DoneClick( object sender , RoutedEventArgs e )
 		{
 			try
 			{
 				this.viewModel.Done( this.GetImage( ) );
-				throw new InvalidOperationException( "Some random thing." );
 			}
 			catch ( Exception ex )
 			{

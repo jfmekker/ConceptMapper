@@ -33,6 +33,26 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Remove="Images\01_file_menu.png" />
+	  <None Remove="Images\02_view_menu.png" />
+	  <None Remove="Images\03_empty_map.png" />
+	  <None Remove="Images\04_root_node.png" />
+	  <None Remove="Images\05_first_main_idea.png" />
+	  <None Remove="Images\06_first_details.png" />
+	  <None Remove="Images\07_first_details_unselect.png" />
+	  <None Remove="Images\08_reselect.png" />
+	  <None Remove="Images\09_oops.png" />
+	  <None Remove="Images\10_precrosslink.png" />
+	  <None Remove="Images\11_postcrosslink.png" />
+	  <None Remove="Images\12_misc_info.png" />
+	  <None Remove="Images\13_calc_depth_width_hss.png" />
+	  <None Remove="Images\14_calc_main_ideas.png" />
+	  <None Remove="Images\15_calc_crosslinks.png" />
+	  <None Remove="Images\16_calc_custom.png" />
+	  <None Remove="Images\17_calc_done.png" />
+	</ItemGroup>
+
 	<!--<ItemGroup>
 		<RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
 	</ItemGroup>-->
@@ -47,6 +67,26 @@
 
 	<ItemGroup>
 		<PackageReference Include="Extended.Wpf.Toolkit" Version="4.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Images\01_file_menu.png" />
+	  <Resource Include="Images\02_view_menu.png" />
+	  <Resource Include="Images\03_empty_map.png" />
+	  <Resource Include="Images\04_root_node.png" />
+	  <Resource Include="Images\05_first_main_idea.png" />
+	  <Resource Include="Images\06_first_details.png" />
+	  <Resource Include="Images\07_first_details_unselect.png" />
+	  <Resource Include="Images\08_reselect.png" />
+	  <Resource Include="Images\09_oops.png" />
+	  <Resource Include="Images\10_precrosslink.png" />
+	  <Resource Include="Images\11_postcrosslink.png" />
+	  <Resource Include="Images\12_misc_info.png" />
+	  <Resource Include="Images\13_calc_depth_width_hss.png" />
+	  <Resource Include="Images\14_calc_main_ideas.png" />
+	  <Resource Include="Images\15_calc_crosslinks.png" />
+	  <Resource Include="Images\16_calc_custom.png" />
+	  <Resource Include="Images\17_calc_done.png" />
 	</ItemGroup>
 
 </Project>
