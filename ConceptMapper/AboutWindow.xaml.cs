@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Reflection;
+using System.Windows;
 
 namespace ConceptMapper
 {
@@ -10,6 +12,9 @@ namespace ConceptMapper
 		public AboutWindow( )
 		{
 			this.InitializeComponent( );
+
+			this.BuildVersionLabel.Content = Assembly.GetExecutingAssembly( ).GetName( ).Version?.ToString( ) ?? "unknown";
+			this.BuildDateLabel.Content = File.GetLastWriteTime( Assembly.GetExecutingAssembly( ).Location );
 		}
 	}
 }
